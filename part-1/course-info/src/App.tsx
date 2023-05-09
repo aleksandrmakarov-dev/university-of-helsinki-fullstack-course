@@ -25,9 +25,11 @@ const Part = (props:any) =>{
 }
 
 const Footer = (props:any) =>{
+
+  const totalExercises = props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises;
   return(
     <div>
-      <p>Number of exercises { props.totalExercises }</p>
+      <p>Number of exercises { totalExercises }</p>
     </div>
   );
 }
@@ -43,13 +45,13 @@ const App = () =>{
     ]
   }
 
-  const totalExercises = course.parts[0].exercises + course.parts[1].exercises + course.parts[2].exercises;
+  
 
   return(
     <div>
       <Header name={ course.name }/>
       <Content parts={ course.parts }/>
-      <Footer totalExercises={ totalExercises }/>
+      <Footer parts={ course.parts }/>
     </div>
   );
 }
