@@ -1,3 +1,32 @@
+const Header = (props:any) =>{
+  return(
+    <h1>{ props.name }</h1>
+  );
+}
+
+const Content = (props:any) =>{
+  return(
+    <div>
+      <p>
+        { props.parts[0].name }: { props.parts[0].exercises }
+      </p>
+      <p>
+        { props.parts[1].name }: { props.parts[1].exercises }
+      </p>
+      <p>
+        { props.parts[2].name }: { props.parts[2].exercises }
+      </p>
+    </div>
+  );
+}
+
+const Footer = (props:any) =>{
+  return(
+    <div>
+      <p>Number of exercises { props.totalExercises }</p>
+    </div>
+  );
+}
 
 const App = () =>{
 
@@ -14,17 +43,9 @@ const App = () =>{
 
   return(
     <div>
-      <h1>{ course.name }</h1>
-      <p>
-        { course.parts[0].name }: { course.parts[0].exercises }
-      </p>
-      <p>
-        { course.parts[1].name }: { course.parts[1].exercises }
-      </p>
-      <p>
-        { course.parts[2].name }: { course.parts[2].exercises }
-      </p>
-      <p>Number of exercises { totalExercises }</p>
+      <Header name={ course.name }/>
+      <Content parts={ course.parts }/>
+      <Footer totalExercises={ totalExercises }/>
     </div>
   );
 }
