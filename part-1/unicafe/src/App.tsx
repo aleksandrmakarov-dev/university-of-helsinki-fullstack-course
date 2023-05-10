@@ -9,6 +9,7 @@ const Header = ({title}:{title:string}) =>{
   );
 }
 
+//Button component
 const Button = ({text,handleClick}:{text:string,handleClick:()=>void}) => {
   return(
     <>
@@ -17,6 +18,7 @@ const Button = ({text,handleClick}:{text:string,handleClick:()=>void}) => {
   );
 }
 
+//Options component: three buttons (good, neutral, bad)
 const Options = (props:any) => {
 
   return(
@@ -28,20 +30,31 @@ const Options = (props:any) => {
   );
 }
 
+//Statistics component: shows good, neutral, bad, total, avg and positive results
 const Statistics = (props:any) =>{
-  return(
-    <div>
-      <h2>Statistics</h2>
-      <StatisticsLine text='Good' value={props.good}/>
-      <StatisticsLine text='Neutral' value={props.neutral}/>
-      <StatisticsLine text='Bad' value={props.bad}/>
-      <StatisticsLine text='Total' value={props.results.total}/>
-      <StatisticsLine text='Average' value={props.results.avg}/>
-      <StatisticsLine text='Positive' value={props.results.positive} units='%'/>
-    </div>
-  );
+  if(props.good === 0 && props.neutral === 0 && props.bad === 0){
+    return(
+      <div>
+        <p>No feedback given yet</p>
+      </div>
+    )
+  }else{
+    return(
+      <div>
+        <h2>Statistics</h2>
+        <StatisticsLine text='Good' value={props.good}/>
+        <StatisticsLine text='Neutral' value={props.neutral}/>
+        <StatisticsLine text='Bad' value={props.bad}/>
+        <StatisticsLine text='Total' value={props.results.total}/>
+        <StatisticsLine text='Average' value={props.results.avg}/>
+        <StatisticsLine text='Positive' value={props.results.positive} units='%'/>
+      </div>
+    );
+  }
+
 }
 
+//Statistics line component: shows text and value (with or without units)
 const StatisticsLine = ({text,value,units}:{text:string,value:number,units?:string}) =>{
   return(
     <p>{text}:{value}{units}</p>
@@ -55,18 +68,22 @@ const App = () =>{
   const [bad,setBad] = useState(0);
   const [results,setResults] = useState({total:0,avg:0,positive:0});
 
+  //Function calculates average value based on good, neutral and bad values
   const calcAvg = (g:number,n:number,b:number) =>{
     return (g*1 + n * 0 + b * -1)/(g+n+b);
   }
 
+  //Function calculates positive value based on good, neutral and bad values
   const calcPos = (g:number,n:number,b:number) =>{
     return g/(g+n+b);
   }
 
+  //Function calculates total value based on good, neutral and bad values
   const calcTotal = (g:number,n:number,b:number) =>{
     return g+n+b;
   }
 
+  //Function recalculates total, average and positive values
   const reCalc = (g:number,n:number,b:number) => {
     const total = calcTotal(g,n,b);
     const avg = calcAvg(g,n,b);
