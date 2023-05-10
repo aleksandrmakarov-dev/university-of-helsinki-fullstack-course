@@ -45,8 +45,6 @@ const App = () =>{
     ]
   }
 
-  
-
   return(
     <div>
       <Header name={ course.name }/>
