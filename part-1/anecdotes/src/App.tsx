@@ -69,17 +69,19 @@ const App = () =>{
     return Math.round(Math.random() * (max - min) + min);
   }
 
+  //Select next anecdote
   const handleNextClick = () =>{
     const min = 0;
     const max = anecdotes.length-1;
     let nextAnecdote = getRand(min,max);
-    //Ensure that we get the same anecdote after getRand()
+    //Ensure that we don't get the same anecdote after getRand()
     if(nextAnecdote === selectedAnecdote){
       nextAnecdote = getRand(min,max);
     }
     setSelectedAnecdote(nextAnecdote);
   }
 
+  //Vote for the anecdote
   const handleVoteClick = () =>{
     const copy = [...votes];
     copy[selectedAnecdote] +=1;
@@ -97,6 +99,7 @@ const App = () =>{
     }
   }
 
+  //Object to hold selected anecdote
   const anecdote = {
     text:anecdotes[selectedAnecdote],
     points:votes[selectedAnecdote]
@@ -104,6 +107,7 @@ const App = () =>{
 
   const index = votes.indexOf(Math.max(...votes));
 
+  //Object to hold the most voted anecdote
   const mostVotedAnecdote = {
     text:anecdotes[index],
     points:votes[index]
