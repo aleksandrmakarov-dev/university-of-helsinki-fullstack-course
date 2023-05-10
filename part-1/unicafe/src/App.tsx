@@ -42,12 +42,16 @@ const Statistics = (props:any) =>{
     return(
       <div>
         <h2>Statistics</h2>
-        <StatisticsLine text='Good' value={props.good}/>
-        <StatisticsLine text='Neutral' value={props.neutral}/>
-        <StatisticsLine text='Bad' value={props.bad}/>
-        <StatisticsLine text='Total' value={props.results.total}/>
-        <StatisticsLine text='Average' value={props.results.avg}/>
-        <StatisticsLine text='Positive' value={props.results.positive} units='%'/>
+        <table>
+          <tbody>
+            <StatisticsLine text='Good' value={props.good}/>
+            <StatisticsLine text='Neutral' value={props.neutral}/>
+            <StatisticsLine text='Bad' value={props.bad}/>
+            <StatisticsLine text='Total' value={props.results.total}/>
+            <StatisticsLine text='Average' value={props.results.avg}/>
+            <StatisticsLine text='Positive' value={props.results.positive} units='%'/>
+          </tbody>
+        </table>
       </div>
     );
   }
@@ -57,7 +61,10 @@ const Statistics = (props:any) =>{
 //Statistics line component: shows text and value (with or without units)
 const StatisticsLine = ({text,value,units}:{text:string,value:number,units?:string}) =>{
   return(
-    <p>{text}:{value}{units}</p>
+    <tr>
+      <td>{text}</td>
+      <td>{value}{units}</td>
+    </tr>
   );
 }
 
