@@ -27,6 +27,6 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <App notes={notes}/>
+    <App propsNotes={notes}/>
   </React.StrictMode>
 );
