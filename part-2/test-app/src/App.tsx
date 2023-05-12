@@ -1,17 +1,28 @@
-import {ChangeEvent, FC, FormEventHandler, useState} from 'react';
+import {ChangeEvent, FC, FormEventHandler, useEffect, useState} from 'react';
 import Note from './components/Note/Note';
+import axios from 'axios';
 
-interface INote{
+export interface INote{
   id:number,
   content:string,
   important:boolean
 }
+  
+const base_url:string = 'http://localhost:3001'
 
-const App:FC<{propsNotes:INote[]}> = ({propsNotes}) =>{
+const App:FC = () =>{
 
-  const [notes, setNotes] = useState<INote[]>(propsNotes);
+  const [notes, setNotes] = useState<INote[]>([]);
   const [newNote,setNewNote] = useState<string>('a new note...');
   const [showAll, setShowAll] = useState<boolean>(true);
+
+  useEffect(()=>{
+    axios
+      .get<INote[]>(base_url+'/notes')
+      .then((response)=>{
+        setNotes(response.data);
+      });
+  },[])
 
   const addNote:FormEventHandler<HTMLFormElement> = (e) =>{
     e.preventDefault();
