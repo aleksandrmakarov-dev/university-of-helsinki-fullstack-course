@@ -1,6 +1,7 @@
-import {ChangeEvent, FC, FormEventHandler, useEffect, useState} from 'react';
+import {FC, FormEventHandler, useEffect, useState} from 'react';
 import Note from './components/Note/Note';
 import axios from 'axios';
+import noteService from './services/note-service';
 
 export interface INote{
   id:number,
@@ -17,23 +18,34 @@ const App:FC = () =>{
   const [showAll, setShowAll] = useState<boolean>(true);
 
   useEffect(()=>{
-    axios
-      .get<INote[]>(base_url+'/notes')
-      .then((response)=>{
-        setNotes(response.data);
+
+    const nonExisting = {
+      id: 10000,
+      content: 'This note is not saved to server',
+      important: true,
+    }
+
+    noteService
+      .getAll()
+      .then((response:INote[])=>{
+        setNotes(response.concat(nonExisting));
       });
   },[])
 
   const addNote:FormEventHandler<HTMLFormElement> = (e) =>{
     e.preventDefault();
     const noteObject:INote = {
-      id:notes.length+1,
+      id:0,
       content:newNote,
       important:Math.random() < 0.5
     }
 
-    setNotes(notes.concat(noteObject));
-    setNewNote('');
+    noteService
+      .create(noteObject)
+      .then((response:INote)=>{
+        setNotes(notes.concat(response));
+        setNewNote('');
+      });
   }
 
   const handleNoteChange:FormEventHandler<HTMLInputElement> = (e) =>{
@@ -46,6 +58,28 @@ const App:FC = () =>{
     setShowAll(e.currentTarget.checked);
   }
 
+  const handleToggleImportance = (id:number) =>{
+    const note = notes.find((note:INote)=>note.id == id);
+    if(note == undefined){
+      console.log(`could not find note with id = ${id}}`);
+      return;
+
+    }
+    const changedNote:INote = {...note,important:!note?.important};
+
+    noteService
+      .update(id,changedNote)
+      .then((response:INote)=>{
+        setNotes(notes.map((note:INote)=> note.id !== id ? note: response))
+      })
+      .catch((error)=>{
+        alert(
+          `the note "${note.content}" was deleted from server`
+        )
+        setNotes(notes.filter((note:INote)=>note.id !== id))
+      })
+  }
+
   const notesToShow:INote[] = showAll ? notes : notes.filter((note:INote) => note.important);
 
   return (
@@ -53,7 +87,7 @@ const App:FC = () =>{
     <h1>Notes</h1>
     <ul>
       {notesToShow.map((note:INote) => 
-        <Note key={note.id} text={note.content}/>
+        <Note key={note.id} note={note} handleToggleImportance={()=>handleToggleImportance(note.id)}/>
       )}
     </ul>
     <input type="checkbox" id='showAll' checked={showAll} onChange={handleShowAllChange}/>

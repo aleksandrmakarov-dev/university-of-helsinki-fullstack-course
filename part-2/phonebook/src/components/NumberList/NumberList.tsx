@@ -5,9 +5,10 @@ import NumberListItem from '../NumberListItem/NumberListItem';
 
 interface NumberListProps {
   persons:IPerson[];
+  handlePersonRemove:(id:number)=>void
 }
 
-const NumberList: FC<NumberListProps> = ({persons}) => {
+const NumberList: FC<NumberListProps> = ({persons,handlePersonRemove}) => {
   if(persons.length > 0){
     return(
       <table>
@@ -15,18 +16,19 @@ const NumberList: FC<NumberListProps> = ({persons}) => {
           <tr>
             <th>Name</th>
             <th>Phone number</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {persons.map((person:IPerson) => 
-            <NumberListItem key={person.id} name={person.name} number={person.number}/>
+            <NumberListItem key={person.id} name={person.name} number={person.number} handlePersonRemove={()=>handlePersonRemove(person.id)}/>
           )}
         </tbody>
       </table>
     )
   }else{
     return(
-      <p>No phone numbers added</p>
+      <p>No phone numbers</p>
     )
   }
 }

@@ -1,10 +1,20 @@
 import { FC } from 'react';
+import { INote } from '../../App';
 
-const Note: FC<{text:string}> = ({text}) => {
+interface NoteProps{
+   note:INote,
+   handleToggleImportance:() => void;
+}
+
+const Note: FC<NoteProps> = ({note,handleToggleImportance}) => {
+
+   const label = note.important ? 'x': 'v';
+
    return(
       <>
          <li>
-            {text}
+            {note.content}
+            <button onClick={handleToggleImportance}>{label}</button>
          </li>
       </>
    )
