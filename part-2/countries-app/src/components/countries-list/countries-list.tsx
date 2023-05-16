@@ -14,14 +14,6 @@ const CountriesList: FC<CountriesListProps> = ({countries, handleShowClick}) => 
     return(null);
   }else{
 
-    if(countries.length === 1){
-      return(
-        <div className='border border-gray-200 p-4 rounded overflow-auto bg-white'>
-          <CountryDetails details={countries[0]}/>
-        </div>
-      )
-    }
-
     // if(countries.length > 10){
     //   return(
     //     <div className='border border-gray-200 p-4 rounded bg-white'>
