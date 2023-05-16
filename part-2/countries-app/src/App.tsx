@@ -90,21 +90,6 @@ const App = () =>{
     }
 
   },[filter]);
-
-  useEffect(()=>{
-    if(currentCountry === undefined){
-      return;
-    }
-
-    if(currentCountry.capital === undefined || currentCountry.capital.length === 0){
-      return;
-    }
-
-    weatherService
-      .getWeather(currentCountry.capital[0])
-      .then((response:Weather)=>setWeather(response));
-
-  },[currentCountry])
   
   return (
     <div className='bg-gray-50 min-h-screen py-8 px-4'>
