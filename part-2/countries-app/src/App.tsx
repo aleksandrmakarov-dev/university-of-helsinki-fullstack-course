@@ -13,6 +13,7 @@ const App = () =>{
   const [currentCountry,setCurrentCountry] = useState<Country>();
   const [weather,setWeather] = useState<Weather>();
   const [searchResult,setSearchResult] = useState<Country[] | undefined>([]);
+  const [searchModeExact,setSearchModeExact] = useState<boolean>(false);
 
   const sortCountriesByName = (a:Country,b:Country)=>{
     if (a.name.common < b.name.common) {
@@ -26,10 +27,12 @@ const App = () =>{
 
   const handleFilterChange:FormEventHandler<HTMLInputElement> = (e) =>{
     setFilter(e.currentTarget.value);
+    setSearchModeExact(false);
   }
 
   const handleShowClick = (name:string) =>{
     setFilter(name);
+    setSearchModeExact(true);
   }
 
   useEffect(()=>{
@@ -45,14 +48,32 @@ const App = () =>{
       setWeather(undefined);
       return;
     }
+
+    if(currentCountry.capital === undefined){
+      setWeather(undefined);
+      return;
+    }
+
+    if(currentCountry.capital.length === 0){
+      setWeather(undefined);
+      return;
+    }
+
     weatherService
       .getWeather(currentCountry.capital[0])
       .then((response)=>setWeather(response));
-  },[])
+  },[currentCountry])
 
   useEffect(()=>{
 
-    const result = filter.length === 0 ? undefined : countries.filter((country:Country)=>country.name.common.toLocaleLowerCase().includes(filter.toLocaleLowerCase()));
+    let result:Country[] | undefined = undefined;
+
+    if(filter.length !== 0){
+
+      const filterFunc = searchModeExact ? (name:string,filter:string) => name === filter : (name:string,filter:string) => name.toLocaleLowerCase().includes(filter.toLocaleLowerCase());
+
+      result = countries.filter((country:Country)=>filterFunc(country.name.common,filter));
+    }
 
     if(result === undefined){
       setCurrentCountry(undefined);
@@ -63,7 +84,7 @@ const App = () =>{
     if(result.length === 1){
       setCurrentCountry(result[0]);
       setSearchResult(undefined);
-    }else if(result.length > 1){
+    }else if(result.length !== 1){
       setCurrentCountry(undefined);
       setSearchResult(result);
     }
@@ -75,7 +96,7 @@ const App = () =>{
       return;
     }
 
-    if(currentCountry.capital.length === 0){
+    if(currentCountry.capital === undefined || currentCountry.capital.length === 0){
       return;
     }
 
@@ -89,7 +110,7 @@ const App = () =>{
     <div className='bg-gray-50 min-h-screen py-8 px-4'>
       <div className='w-full min-h-[calc(100%_-_4rem)] mx-auto max-w-3xl bg-white rounded border border-gray-200 shadow-sm'>
         <div className='border-b border-gray-200 p-4'>
-          <h1 className='text-3xl font-semibold'>Contries App</h1>
+          <h1 className='text-3xl font-semibold'>Countries App</h1>
         </div>
         <div className='p-4'>
           <SearchBar value={filter} handleFilterChange={handleFilterChange}/>

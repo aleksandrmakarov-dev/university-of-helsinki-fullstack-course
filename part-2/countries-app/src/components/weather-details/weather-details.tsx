@@ -3,10 +3,15 @@ import { Weather } from '../../services/weather-service';
 
 
 interface WeatherDetailsProps {
-  weather:Weather;
+  weather:Weather | undefined;
 }
 
 const WeatherDetails: FC<WeatherDetailsProps> = ({weather}) => {
+
+  if(weather === undefined){
+    return(null);
+  }
+
   return(
     <div>
       <h2 className='text-2xl font-semibold mb-4 pb-2 border-b border-gray-200'>Weather in {weather.location.name}</h2>
