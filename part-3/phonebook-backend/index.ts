@@ -37,9 +37,17 @@ app.get('/', (req:Request, res:Response) =>{
     res.json({message:'hello world!'});
 })
 
+//GET all persons
 app.get('/api/persons', (req:Request, res:Response) =>{
     res.json(persons);
 })
+
+//GET info about number of persons and current time
+app.get('/api/info', (req:Request, res:Response) =>{
+    const date = Date();
+    res.end(`<p>Phonebook has info for ${persons.length} people</p><p>${date}</p>`);
+});
+
 
 const PORT:number = 3000;
 
