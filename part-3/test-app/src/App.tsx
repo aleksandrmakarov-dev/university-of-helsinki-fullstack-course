@@ -8,8 +8,7 @@ export interface INote{
   content:string,
   important:boolean
 }
-  
-const base_url:string = 'http://localhost:3001'
+
 
 const App:FC = () =>{
 
@@ -73,6 +72,7 @@ const App:FC = () =>{
         setNotes(notes.map((note:INote)=> note.id !== id ? note: response))
       })
       .catch((error)=>{
+        console.log(error);
         alert(
           `the note "${note.content}" was deleted from server`
         )
