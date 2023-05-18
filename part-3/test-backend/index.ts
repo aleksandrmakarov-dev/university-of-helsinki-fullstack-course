@@ -1,4 +1,5 @@
 import express, { Express, NextFunction, Request, Response } from "express";
+import cors from "cors";
 
 const logger = (req:Request,res:Response,next:NextFunction) =>{
     console.log('Method:', req.method)
@@ -15,6 +16,7 @@ const unknownEndpoint = (req:Request, res:Response, next:NextFunction) =>{
 
 const app:Express = express();
 app.use(express.json());
+app.use(cors());
 app.use(logger);
 
 let notes = [
@@ -92,7 +94,7 @@ app.post('/api/notes', (req:Request, res:Response) =>{
 
 app.use(unknownEndpoint);
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

@@ -107,7 +107,7 @@ app.post('/api/persons', (req:Request, res:Response) =>{
 });
 
 
-const PORT:number = 3000;
+const PORT:number = 3001;
 
 app.listen(PORT,() =>{
     console.log(`Server running on port ${PORT}`);
