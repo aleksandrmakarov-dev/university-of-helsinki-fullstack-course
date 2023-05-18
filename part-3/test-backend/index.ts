@@ -16,6 +16,7 @@ const unknownEndpoint = (req:Request, res:Response, next:NextFunction) =>{
 
 const app:Express = express();
 app.use(express.json());
+app.use(express.static('build'));
 app.use(cors());
 app.use(logger);
 
@@ -91,6 +92,7 @@ app.post('/api/notes', (req:Request, res:Response) =>{
 
   return res.json(note);
 });
+
 
 app.use(unknownEndpoint);
 
