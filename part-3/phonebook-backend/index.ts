@@ -1,4 +1,4 @@
-import express, {Express, Response, Request} from "express";
+import express, {Express, Response, Request, json} from "express";
 import morgan from "morgan";
 
 interface Person{
@@ -32,8 +32,11 @@ let persons:Person[] = [
 
 const app:Express = express();
 
+//Define token for body
+morgan.token('body',(req:Request) => JSON.stringify(req.body));
+
 app.use(express.json());
-app.use(morgan('tiny'));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
 const getPersonById = (id:number):Person | undefined =>{
     return persons.find((person:Person)=>person.id === id);
