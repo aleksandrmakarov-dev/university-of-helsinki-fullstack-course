@@ -52,7 +52,7 @@ app.get('/api/persons', (req:Request, res:Response) =>{
 })
 
 //GET info about number of persons and current time
-app.get('/api/info', (req:Request, res:Response) =>{
+app.get('/info', (req:Request, res:Response) =>{
     const date = Date();
     res.end(`<p>Phonebook has info for ${persons.length} people</p><p>${date}</p>`);
 });
