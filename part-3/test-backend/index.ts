@@ -9,11 +9,6 @@ const logger = (req:Request,res:Response,next:NextFunction) =>{
     next();
 }
 
-const unknownEndpoint = (req:Request, res:Response, next:NextFunction) =>{
-    res.status(404).json({error:'unknown endpoint'});
-    next();
-}
-
 const app:Express = express();
 app.use(express.json());
 app.use(express.static('build'));
@@ -86,9 +81,6 @@ app.post('/api/notes', (req:Request, res:Response) =>{
 
   return res.json(note);
 });
-
-
-app.use(unknownEndpoint);
 
 const PORT = process.env.PORT || 3001;
 
