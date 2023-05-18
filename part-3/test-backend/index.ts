@@ -38,12 +38,6 @@ let notes = [
   }
 ]
 
-
-//Test page
-app.get('/', (req:Request, res:Response) => {
-  res.send('<h1>Hello world!</h1>');
-});
-
 //GET all notes
 app.get('/api/notes',(req:Request,res:Response) =>{
   res.json(notes);
