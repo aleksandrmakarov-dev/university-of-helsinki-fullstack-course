@@ -1,4 +1,5 @@
 import express, {Express, Response, Request} from "express";
+import morgan from "morgan";
 
 interface Person{
     id:number,
@@ -32,6 +33,7 @@ let persons:Person[] = [
 const app:Express = express();
 
 app.use(express.json());
+app.use(morgan('tiny'));
 
 const getPersonById = (id:number):Person | undefined =>{
     return persons.find((person:Person)=>person.id === id);
