@@ -1,7 +1,7 @@
 import axios from "axios";
 import { INote } from "../App";
 
-const baseUrl = 'https://test-backend-q0hc.onrender.com/api';
+const baseUrl = '/api';
 
 const getAll = () =>{
     return axios
