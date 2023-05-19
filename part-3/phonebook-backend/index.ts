@@ -1,5 +1,6 @@
 import express, {Express, Response, Request, json} from "express";
 import morgan from "morgan";
+import cors from "cors";
 
 interface Person{
     id:number,
@@ -36,15 +37,13 @@ const app:Express = express();
 morgan.token('body',(req:Request) => JSON.stringify(req.body));
 
 app.use(express.json());
+app.use(cors());
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
+app.use(express.static('build'));
 
 const getPersonById = (id:number):Person | undefined =>{
     return persons.find((person:Person)=>person.id === id);
 }
-
-app.get('/', (req:Request, res:Response) =>{
-    res.json({message:'hello world!'});
-})
 
 //GET all persons
 app.get('/api/persons', (req:Request, res:Response) =>{
@@ -107,7 +106,7 @@ app.post('/api/persons', (req:Request, res:Response) =>{
 });
 
 
-const PORT:number = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT,() =>{
     console.log(`Server running on port ${PORT}`);
