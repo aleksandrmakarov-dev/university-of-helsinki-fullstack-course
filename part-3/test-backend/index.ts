@@ -1,5 +1,10 @@
-import express, { Express, NextFunction, Request, Response } from "express";
+import express, { Express, NextFunction, Request, Response, response } from "express";
 import cors from "cors";
+import mongoose, { Model } from "mongoose";
+import { INote } from "./models/note";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 const logger = (req:Request,res:Response,next:NextFunction) =>{
     console.log('Method:', req.method)
@@ -15,51 +20,50 @@ app.use(express.static('build'));
 app.use(cors());
 app.use(logger);
 
-let notes = [
-  {
-    id: 1,
-    content: "HTML is easy",
-    important: true
-  },
-  {
-    id: 2,
-    content: "Browser can execute only JavaScript",
-    important: false
-  },
-  {
-    id: 3,
-    content: "GET and POST are the most important methods of HTTP protocol",
-    important: true
-  }
-]
+const Note:Model<INote> = require('./models/note');
 
 //GET all notes
 app.get('/api/notes',(req:Request,res:Response) =>{
-  res.json(notes);
+  Note
+    .find()
+    .then((response:INote[]) =>{
+      return res.json(response);
+    })
+    .catch((e) =>{
+      return res.status(400).json({error:e})
+    });
 });
 
 //GET note by id
 app.get('/api/notes/:id',(req:Request,res:Response) =>{
-  const id = Number(req.params.id);
-  const note = notes.find((note)=>note.id === id);
-  if(note === undefined){
-    res.status(404).json({error:'note with given id not found'});
-  }else{
-    res.json(note);
-  }
+  const id = new mongoose.mongo.ObjectId(req.params.id);
+  Note
+    .findOne({_id:id})
+    .then((response:INote | null)=>{
+      if(response === null){
+        return res.status(404).json({error:'note with given id not found'});
+      }else{
+        return res.json(response);
+      }
+    })
+    .catch((e) =>{
+      return res.status(400).json({error:e})
+    });
+  
 })
 
 //DELETE note by id
 app.delete('/api/notes/:id', (req:Request,res:Response) =>{
-  const id = Number(req.params.id);
-  notes = notes.filter((note)=>note.id !== id);
-  res.status(204).end();
+  const id = new mongoose.mongo.ObjectId(req.params.id);
+  Note
+    .deleteOne({_id:id})
+    .then(()=>{
+      return res.status(204).end();
+    })
+    .catch((e) =>{
+      return res.status(400).json({error:e})
+    });
 });
-
-const generateId = () =>{
-  const maxId = notes.length > 0 ? Math.max(...notes.map(note=>note.id)) : 0;
-  return maxId + 1;
-}
 
 //POST new note
 app.post('/api/notes', (req:Request, res:Response) =>{
@@ -67,22 +71,30 @@ app.post('/api/notes', (req:Request, res:Response) =>{
 
   if(!body.content){
     return res.status(400).json({error:'content is missing'});
+  }else{
+    
   }
 
-  const note = {
+  const note:INote = {
+    id:'',
     content:body.content,
-    important:body.important || false,
-    id:generateId()
+    important:body.important || false
   }
 
   console.log(note);
 
-  notes = notes.concat(note);
-
-  return res.json(note);
+  Note
+    .create(note)
+    .then((response:INote) =>{
+      return res.json(response);
+    })
+    .catch((e) =>{
+      console.log(e);
+      return res.status(400).json({error:e})
+    });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

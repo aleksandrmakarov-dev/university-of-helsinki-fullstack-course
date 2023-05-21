@@ -15,7 +15,7 @@ const create = (note:INote) =>{
             .then((response)=>response.data);
 }
 
-const update = (id:number, note:INote) =>{
+const update = (id:string, note:INote) =>{
     return axios
             .put<INote>(baseUrl + '/notes' + '/' + id, note)
             .then((response)=>response.data);

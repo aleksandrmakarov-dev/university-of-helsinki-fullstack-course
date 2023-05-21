@@ -4,7 +4,7 @@ import axios from 'axios';
 import noteService from './services/note-service';
 
 export interface INote{
-  id:number,
+  id:string,
   content:string,
   important:boolean
 }
@@ -19,7 +19,7 @@ const App:FC = () =>{
   useEffect(()=>{
 
     const nonExisting = {
-      id: 10000,
+      id: '1',
       content: 'This note is not saved to server',
       important: true,
     }
@@ -34,7 +34,7 @@ const App:FC = () =>{
   const addNote:FormEventHandler<HTMLFormElement> = (e) =>{
     e.preventDefault();
     const noteObject:INote = {
-      id:0,
+      id:'',
       content:newNote,
       important:Math.random() < 0.5
     }
@@ -57,9 +57,9 @@ const App:FC = () =>{
     setShowAll(e.currentTarget.checked);
   }
 
-  const handleToggleImportance = (id:number) =>{
-    const note = notes.find((note:INote)=>note.id == id);
-    if(note == undefined){
+  const handleToggleImportance = (id:string) =>{
+    const note = notes.find((note:INote)=>note.id === id);
+    if(note === undefined){
       console.log(`could not find note with id = ${id}}`);
       return;
 
@@ -74,9 +74,8 @@ const App:FC = () =>{
       .catch((error)=>{
         console.log(error);
         alert(
-          `the note "${note.content}" was deleted from server`
+          `could not update note importance`
         )
-        setNotes(notes.filter((note:INote)=>note.id !== id))
       })
   }
 
