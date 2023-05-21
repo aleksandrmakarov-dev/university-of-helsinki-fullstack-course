@@ -36,9 +36,9 @@ app.get('/api/notes',(req:Request,res:Response) =>{
 
 //GET note by id
 app.get('/api/notes/:id',(req:Request,res:Response) =>{
-  const id = new mongoose.mongo.ObjectId(req.params.id);
+  const id = req.params.id;
   Note
-    .findOne({_id:id})
+    .findById(id)
     .then((response:INote | null)=>{
       if(response === null){
         return res.status(404).json({error:'note with given id not found'});
@@ -82,6 +82,8 @@ app.post('/api/notes', (req:Request, res:Response) =>{
   }
 
   console.log(note);
+
+
 
   Note
     .create(note)
