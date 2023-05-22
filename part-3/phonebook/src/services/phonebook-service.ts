@@ -15,13 +15,13 @@ const create = (person:IPerson):Promise<IPerson> =>{
             .then((response)=>response.data);
 }
 
-const update = (id:number,person:IPerson):Promise<IPerson>  =>{
+const update = (id:string,person:IPerson):Promise<IPerson>  =>{
     return axios
             .put<IPerson>(baseUrl + '/persons' + '/' + id,person)
             .then((response)=>response.data);
 }
 
-const remove = (id:number) =>{
+const remove = (id:string) =>{
     return axios
             .delete(baseUrl + '/persons' + '/' + id);
 }

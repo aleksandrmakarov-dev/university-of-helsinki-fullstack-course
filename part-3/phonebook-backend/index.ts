@@ -1,37 +1,15 @@
-import express, {Express, Response, Request, json} from "express";
+import express, {Express, Response, Request, NextFunction} from "express";
 import morgan from "morgan";
 import cors from "cors";
+import * as dotenv from "dotenv";
+import { Model } from "mongoose";
+import { IPerson } from "./models/person";
 
-interface Person{
-    id:number,
-    name:string,
-    number:string
-}
-
-let persons:Person[] = [
-    { 
-        id: 1,
-        name: "Arto Hellas", 
-        number: "040-123456"
-    },
-    { 
-        id: 2,
-        name: "Ada Lovelace", 
-        number: "39-44-5323523"
-    },
-    { 
-        id: 3,
-        name: "Dan Abramov", 
-        number: "12-43-234345"
-    },
-    { 
-        id: 4,
-        name: "Mary Poppendieck", 
-        number: "39-23-6423122"
-    }
-]
+dotenv.config();
 
 const app:Express = express();
+const Person:Model<IPerson> = require('./models/person');
+const errorHandler = require('./middlewares/errorHandler');
 
 //Define token for body
 morgan.token('body',(req:Request) => JSON.stringify(req.body));
@@ -41,72 +19,125 @@ app.use(cors());
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 app.use(express.static('build'));
 
-const getPersonById = (id:number):Person | undefined =>{
-    return persons.find((person:Person)=>person.id === id);
-}
-
 //GET all persons
-app.get('/api/persons', (req:Request, res:Response) =>{
-    res.json(persons);
+app.get('/api/persons', (req:Request, res:Response,next:NextFunction) =>{
+    Person
+        .find()
+        .then((response:IPerson[]) =>{
+            return res.json(response);
+        })
+        .catch((e) =>next(e))
 })
 
 //GET info about number of persons and current time
-app.get('/info', (req:Request, res:Response) =>{
-    const date = Date();
-    res.end(`<p>Phonebook has info for ${persons.length} people</p><p>${date}</p>`);
+app.get('/info', (req:Request, res:Response,next:NextFunction) =>{
+    Person
+        .find()
+        .then((response:IPerson[]) =>{
+            const date = Date();
+            return res.end(`<p>Phonebook has info for ${response.length} people</p><p>${date}</p>`);
+        })
+        .catch((e) =>next(e))
 });
 
 //GET person by id
-app.get('/api/persons/:id', (req:Request, res:Response) =>{
-    const id = Number(req.params.id);
-    const person = getPersonById(id);
-    if(!person){
-        res.status(404).json({error:`person wit id = ${id} not found`});
-    }else{
-        res.json(person);
-    }
+app.get('/api/persons/:id', (req:Request, res:Response,next:NextFunction) =>{
+    const id = req.params.id;
+    Person
+        .findById(id)
+        .then((response:IPerson | null) =>{
+            if(response === null){
+                return res.status(404).json({error:`person with id = ${id} not found`});
+            }else{
+                return res.json(response);
+            }
+        })
+        .catch((e) =>next(e))
 })
 
 //DELETE person by id
-app.delete('/api/persons/:id', (req:Request, res:Response) =>{
-    const id = Number(req.params.id);
-    const person = getPersonById(id);
-    if(!person){
-        res.status(404).json({error:`person wit id = ${id} not found`});
-    }else{
-        persons = persons.filter((person:Person) =>person.id !== id);
-        res.status(204).end();
-    }
+app.delete('/api/persons/:id', (req:Request, res:Response,next:NextFunction) =>{
+    const id = req.params.id;
+    Person
+        .findByIdAndDelete(id)
+        .then((response:IPerson | null) =>{
+            if(response === null){
+                return res.status(404).json({error:`person wit id = ${id} not found`});
+            }else{
+                return res.status(204).end();
+            }
+        })
+        .catch((e) =>next(e))
 });
 
 //POST person
-app.post('/api/persons', (req:Request, res:Response) =>{
-    const body:Person = req.body;
+app.post('/api/persons', (req:Request, res:Response,next:NextFunction) =>{
+    const body:IPerson = req.body;
+    //Check that name is not empty
     if(!body.name){
         return res.status(400).json({error:'name is missing'});
     }
-
+    //Check that body is not empty
     if(!body.number){
         return res.status(400).json({error:'number is missing'});
     }
 
-    const existingPerson = persons.find((person:Person) =>person.name.toLocaleLowerCase() === body.name.toLocaleLowerCase());
-    if(existingPerson !== undefined){
-        return res.status(400).json({error:`person with name ${body.name} already exists`});
-    }
+    //Check if person with given name already exists
 
-    const newPerson:Person = {
-        id:Math.round(Math.random()*1000000),
-        name:body.name,
-        number:body.number
-    }
-
-    persons = persons.concat(newPerson);
-    return res.json(newPerson);
+    Person
+        .findOne({name:{$regex:`/${body.name}/i`}})
+        .then((response:IPerson | null) =>{
+            //If response is not null, then return error that person with given name exists
+            if(response !== null){
+                return res.status(400).json({error:`person with name ${body.name} already exists`});
+            }else{
+                //Else create new person and add to database
+                const newPerson:IPerson = {
+                    id:'',
+                    name:body.name,
+                    number:body.number
+                }
+                Person
+                    .create(newPerson)
+                    .then((createResponse:IPerson) =>{
+                        return res.json(createResponse);
+                    })
+                    .catch((e) =>next(e))
+            }
+        })
+        .catch((e) =>next(e))
 });
 
+//PUT person by id
+app.put('/api/persons/:id', (req:Request, res:Response,next:NextFunction) =>{
+    const id = req.params.id;
 
-const PORT = process.env.PORT || 3001;
+    const body:IPerson = req.body;
+
+    //Check that name is not empty
+    if(!body.name){
+        return res.status(400).json({error:'name is missing'});
+    }
+    //Check that body is not empty
+    if(!body.number){
+        return res.status(400).json({error:'number is missing'});
+    }
+
+    Person
+        .findByIdAndUpdate(id,{name:body.name,number:body.number},{new:true})
+        .then((response:IPerson | null) =>{
+            if(response === null){
+                return res.status(404).json({error:`person wit id = ${id} not found`});
+            }else{
+                return res.json(response);
+            }
+        })
+        .catch((e) =>next(e));
+})
+
+app.use(errorHandler);
+
+const PORT = process.env.PORT;
 
 app.listen(PORT,() =>{
     console.log(`Server running on port ${PORT}`);

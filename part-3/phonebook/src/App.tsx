@@ -6,7 +6,7 @@ import NumberList from './components/NumberList/NumberList';
 import Notification from './components/Notification/notification';
 
 export interface IPerson{
-  id:number,
+  id:string,
   name:string,
   number:string
 }
@@ -82,7 +82,7 @@ const App = () =>{
     }
     else{
       const personObject:IPerson = {
-        id:0,
+        id:'',
         name:name,
         number:phone
       }
@@ -109,7 +109,7 @@ const App = () =>{
     setFilter(value);
   }
 
-  const handlePersonRemove = (id:number) =>{
+  const handlePersonRemove = (id:string) =>{
 
     const existingPerson = persons.find((person:IPerson)=>person.id === id);
     if(existingPerson === undefined){

@@ -5,7 +5,7 @@ import NumberListItem from '../NumberListItem/NumberListItem';
 
 interface NumberListProps {
   persons:IPerson[];
-  handlePersonRemove:(id:number)=>void
+  handlePersonRemove:(id:string)=>void
 }
 
 const NumberList: FC<NumberListProps> = ({persons,handlePersonRemove}) => {
