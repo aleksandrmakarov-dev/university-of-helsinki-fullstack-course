@@ -1,9 +1,9 @@
 import { FC } from 'react';
-import { NotificationData } from '../../App';
+import { INotificationData } from '../../App';
 import './notification.css';
 
 interface NotificationProps{
-  data:NotificationData | undefined;
+  data:INotificationData | undefined;
 }
 
 const Notification: FC<NotificationProps> = ({data}) => {

@@ -15,27 +15,28 @@ const logger = (req:Request,res:Response,next:NextFunction) =>{
 }
 
 const app:Express = express();
+
 app.use(express.json());
 app.use(express.static('build'));
 app.use(cors());
 app.use(logger);
 
+const errorHandler = require('./middlewares/errorHandler');
+
 const Note:Model<INote> = require('./models/note');
 
 //GET all notes
-app.get('/api/notes',(req:Request,res:Response) =>{
+app.get('/api/notes',(req:Request,res:Response,next:NextFunction) =>{
   Note
     .find()
     .then((response:INote[]) =>{
       return res.json(response);
     })
-    .catch((e) =>{
-      return res.status(400).json({error:e})
-    });
+    .catch((e) => next(e));
 });
 
 //GET note by id
-app.get('/api/notes/:id',(req:Request,res:Response) =>{
+app.get('/api/notes/:id',(req:Request,res:Response,next:NextFunction) =>{
   const id = req.params.id;
   Note
     .findById(id)
@@ -46,27 +47,23 @@ app.get('/api/notes/:id',(req:Request,res:Response) =>{
         return res.json(response);
       }
     })
-    .catch((e) =>{
-      return res.status(400).json({error:e})
-    });
+    .catch((e) =>next(e));
   
 })
 
 //DELETE note by id
-app.delete('/api/notes/:id', (req:Request,res:Response) =>{
+app.delete('/api/notes/:id', (req:Request,res:Response,next:NextFunction) =>{
   const id = new mongoose.mongo.ObjectId(req.params.id);
   Note
     .deleteOne({_id:id})
     .then(()=>{
       return res.status(204).end();
     })
-    .catch((e) =>{
-      return res.status(400).json({error:e})
-    });
+    .catch((e) =>next(e));
 });
 
 //POST new note
-app.post('/api/notes', (req:Request, res:Response) =>{
+app.post('/api/notes', (req:Request, res:Response,next:NextFunction) =>{
   const body = req.body;
 
   if(!body.content){
@@ -90,11 +87,28 @@ app.post('/api/notes', (req:Request, res:Response) =>{
     .then((response:INote) =>{
       return res.json(response);
     })
-    .catch((e) =>{
-      console.log(e);
-      return res.status(400).json({error:e})
-    });
+    .catch((e) =>next(e));
 });
+
+app.put('/api/notes/:id', (req:Request, res:Response, next:NextFunction) =>{
+  const id = req.params.id;
+  const body:INote = req.body;
+  Note
+    .findByIdAndUpdate(id,{
+      content:body.content,
+      important:body.important
+    },{new:true,runValidators:true,context:'query'})
+    .then((response:INote | null) =>{
+      if(response === null){
+        return res.status(404).json({error:`note wit id = ${id} not found`});
+      }else{
+        return res.json(response);
+      }
+    })
+    .catch((e)=>next(e))
+})
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 

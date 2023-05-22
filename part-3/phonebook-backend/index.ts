@@ -73,15 +73,6 @@ app.delete('/api/persons/:id', (req:Request, res:Response,next:NextFunction) =>{
 //POST person
 app.post('/api/persons', (req:Request, res:Response,next:NextFunction) =>{
     const body:IPerson = req.body;
-    //Check that name is not empty
-    if(!body.name){
-        return res.status(400).json({error:'name is missing'});
-    }
-    //Check that body is not empty
-    if(!body.number){
-        return res.status(400).json({error:'number is missing'});
-    }
-
     //Check if person with given name already exists
 
     Person
@@ -114,17 +105,12 @@ app.put('/api/persons/:id', (req:Request, res:Response,next:NextFunction) =>{
 
     const body:IPerson = req.body;
 
-    //Check that name is not empty
-    if(!body.name){
-        return res.status(400).json({error:'name is missing'});
-    }
-    //Check that body is not empty
-    if(!body.number){
-        return res.status(400).json({error:'number is missing'});
-    }
-
     Person
-        .findByIdAndUpdate(id,{name:body.name,number:body.number},{new:true})
+        .findByIdAndUpdate(
+            id,
+            {name:body.name,number:body.number},
+            {new:true,runValidators:true,context:'query'}
+        )
         .then((response:IPerson | null) =>{
             if(response === null){
                 return res.status(404).json({error:`person wit id = ${id} not found`});

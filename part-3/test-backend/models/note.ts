@@ -23,7 +23,11 @@ mongoose
     });
 
 const noteSchema = new Schema<INote>({
-    content:String,
+    content:{
+        type:String,
+        minlength:5,
+        required:true
+    },
     important:Boolean
 })
     

@@ -4,6 +4,7 @@ import AddNoteForm from './components/AddNoteForm/AddNoteForm';
 import Filter from './components/Filter/Filter';
 import NumberList from './components/NumberList/NumberList';
 import Notification from './components/Notification/notification';
+import { AxiosError } from 'axios';
 
 export interface IPerson{
   id:string,
@@ -11,9 +12,13 @@ export interface IPerson{
   number:string
 }
 
-export interface NotificationData{
+export interface INotificationData{
   text:string;
   isSucess:boolean
+}
+
+export interface IError{
+  error:string
 }
 
 const App = () =>{
@@ -23,7 +28,7 @@ const App = () =>{
   const [name,setName] = useState<string>('');
   const [phone,setPhone] = useState<string>('');
   const [filter,setFilter] = useState<string>('');
-  const [notification,setNotification] = useState<NotificationData>();
+  const [notification,setNotification] = useState<INotificationData>();
 
   useEffect(()=>{
     phonebookService
@@ -78,6 +83,10 @@ const App = () =>{
             setName('');
             setPhone('');
           })
+          .catch((e:AxiosError)=>{
+            const errorData:IError = e.response?.data as IError;
+            setNotification({text:errorData.error,isSucess:false});
+          })
       }
     }
     else{
@@ -96,6 +105,10 @@ const App = () =>{
 
           setName('');
           setPhone('');
+        })
+        .catch((e:AxiosError)=>{
+          const errorData:IError = e.response?.data as IError;
+          setNotification({text:errorData.error,isSucess:false});
         })
     }
   }
