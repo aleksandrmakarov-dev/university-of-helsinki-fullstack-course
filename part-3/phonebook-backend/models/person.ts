@@ -1,6 +1,6 @@
-import mongoose, { Schema, models } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-export interface IPerson{
+export interface Person{
   id: string;
   name: string;
   number: string;
@@ -24,7 +24,7 @@ mongoose
     process.exit(1);
   });
 
-const personSchema: Schema<IPerson> = new Schema<IPerson>({
+const personSchema: Schema<Person> = new Schema<Person>({
   name: {
     type: String,
     minlength: 3,
@@ -49,4 +49,4 @@ personSchema.set('toJSON', {
   },
 });
 
-module.exports = mongoose.model<IPerson>('Person', personSchema);
+module.exports = mongoose.model<Person>('Person', personSchema);

@@ -5,12 +5,12 @@ import morgan from 'morgan';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import { Model } from 'mongoose';
-import { IPerson } from './models/person';
+import { Person } from './models/person';
 
 dotenv.config();
 
 const app: Express = express();
-const Person: Model<IPerson> = require('./models/person');
+const PersonModel: Model<Person> = require('./models/person');
 const errorHandler = require('./middlewares/errorHandler');
 
 // Define token for body
@@ -23,17 +23,17 @@ app.use(express.static('build'));
 
 // GET all persons
 app.get('/api/persons', (req: Request, res: Response, next: NextFunction) => {
-  Person
+  PersonModel
     .find()
-    .then((response: IPerson[]) => res.json(response))
+    .then((response: Person[]) => res.json(response))
     .catch((e) => next(e));
 });
 
 // GET info about number of persons and current time
 app.get('/info', (req: Request, res: Response, next: NextFunction) => {
-  Person
+  PersonModel
     .find()
-    .then((response: IPerson[]) => {
+    .then((response: Person[]) => {
       const date = Date();
       return res.end(`<p>Phonebook has info for ${response.length} people</p><p>${date}</p>`);
     })
@@ -43,9 +43,9 @@ app.get('/info', (req: Request, res: Response, next: NextFunction) => {
 // GET person by id
 app.get('/api/persons/:id', (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
-  Person
+  PersonModel
     .findById(id)
-    .then((response: IPerson | null) => {
+    .then((response: Person | null) => {
       if (response === null) {
         return res.status(404).json({ error: `person with id = ${id} not found` });
       }
@@ -57,9 +57,9 @@ app.get('/api/persons/:id', (req: Request, res: Response, next: NextFunction) =>
 // DELETE person by id
 app.delete('/api/persons/:id', (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
-  Person
+  PersonModel
     .findByIdAndDelete(id)
-    .then((response: IPerson | null) => {
+    .then((response: Person | null) => {
       if (response === null) {
         return res.status(404).json({ error: `person wit id = ${id} not found` });
       }
@@ -73,22 +73,22 @@ app.post('/api/persons', (req: Request, res: Response, next: NextFunction) => {
   const { body } = req;
   // Check if person with given name already exists
 
-  Person
+  PersonModel
     .findOne({ name: { $regex: `/${body.name}/i` } })
-    .then((response: IPerson | null) => {
+    .then((response: Person | null) => {
       // If response is not null, then return error that person with given name exists
       if (response !== null) {
         return res.status(400).json({ error: `person with name ${body.name} already exists` });
       }
       // Else create new person and add to database
-      const newPerson: IPerson = {
+      const newPerson: Person = {
         id: '',
         name: body.name,
         number: body.number,
       };
-      Person
+      PersonModel
         .create(newPerson)
-        .then((createResponse: IPerson) => res.json(createResponse))
+        .then((createResponse: Person) => res.json(createResponse))
         .catch((e) => next(e));
     })
     .catch((e) => next(e));
@@ -100,13 +100,13 @@ app.put('/api/persons/:id', (req: Request, res: Response, next: NextFunction) =>
 
   const { body } = req;
 
-  Person
+  PersonModel
     .findByIdAndUpdate(
       id,
       { name: body.name, number: body.number },
       { new: true, runValidators: true, context: 'query' },
     )
-    .then((response: IPerson | null) => {
+    .then((response: Person | null) => {
       if (response === null) {
         return res.status(404).json({ error: `person wit id = ${id} not found` });
       }
