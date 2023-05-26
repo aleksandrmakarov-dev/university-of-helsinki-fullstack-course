@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
-    "start": "node build/index.js",
-    "dev": "ts-node-dev index.ts",
-    "test": "jest --verbose",
+    "start": "NODE_ENV=production node build/index.js",
+    "dev": "NODE_ENV=development ts-node-dev index.ts",
+    "test": "NODE_ENV=test jest --verbose --runInBand",
     "lint": "eslint --ignore-path .eslintignore --ext .js,.ts .",
     "build:ui": "@powershell Remove-Item -Recurse -Force build && cd ../test-app && npm run build && @powershell Copy-Item build -Recurse -Force ../test-backend"
   },
