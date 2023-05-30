@@ -7,6 +7,8 @@ const logger = require('./utils/logger');
 const config = require('./utils/config');
 const blogsRouter = require('./controllers/blogs');
 
+require('express-async-errors');
+
 const app: Application = express();
 
 mongoose.set('strictQuery', false);

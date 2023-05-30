@@ -7,14 +7,14 @@ const app: Application = require('../app');
 const NoteModel: Model<Note> = require('../models/note');
 const helper = require('./test-helper');
 
+const api = supertest(app);
+
 beforeEach(async () => {
   await NoteModel.deleteMany();
   const promises: Promise<Note>[] = helper.initialNotes.map((note: Note) => NoteModel.create(note));
 
   await Promise.all(promises);
 });
-
-const api = supertest(app);
 
 describe('notes api', () => {
   test('notes are returned as json', async () => {
