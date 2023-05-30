@@ -13,14 +13,14 @@ const requestLogger = (req: Request, res: Response, next: NextFunction) => {
 
 const errorHandler = (error: Error, req: Request, res: Response, _next: NextFunction) => {
   if (error instanceof mongoose.Error.CastError) {
-    console.log('malformatted id');
+    logger.error('malformatted id');
     return res.status(400).json({ error: 'malformatted id' });
   }
   if (error instanceof mongoose.Error.ValidationError) {
-    console.log('validation error:', error.message);
+    logger.error('validation error:', error.message);
     return res.status(400).json({ error: error.message });
   }
-  console.log('internal server error');
+  logger.error('internal server error');
   return res.status(500).json({ error: error?.message });
 };
 

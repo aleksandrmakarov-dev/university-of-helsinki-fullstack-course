@@ -1,12 +1,12 @@
 import mongoose, { Schema } from 'mongoose';
 
-export interface INote {
+export interface Note {
   id: string;
   content: string;
   important: boolean;
 }
 
-const noteSchema = new Schema<INote>({
+const noteSchema = new Schema<Note>({
   content: {
     type: String,
     minlength: 5,

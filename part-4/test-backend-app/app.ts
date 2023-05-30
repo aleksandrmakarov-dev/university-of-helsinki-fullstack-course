@@ -5,9 +5,10 @@ const mongoose = require('mongoose');
 const config = require('./utils/config');
 const logger = require('./utils/logger');
 const middleware = require('./utils/middleware');
-const notesRouter: Router = require('./controllers/notes');
 
 const app: Application = express();
+require('express-async-errors');
+const notesRouter: Router = require('./controllers/notes');
 
 mongoose.set('strictQuery', false);
 logger.info('connecting to:', config.MONGODB_URI);
