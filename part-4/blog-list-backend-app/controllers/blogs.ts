@@ -18,7 +18,7 @@ router.get('/', async (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
   const newBlog: Blog = req.body as Blog;
   const createdBlog: Blog = await BlogModel.create(newBlog);
-  return res.status(201).json(createdBlog);
+  res.status(201).json(createdBlog);
 });
 
 module.exports = router;

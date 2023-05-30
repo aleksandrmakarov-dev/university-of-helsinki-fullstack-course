@@ -43,10 +43,10 @@ describe('blog api tests', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
-    const response = await helper.getExistingBlogs();
+    const response: Blog[] = await helper.getExistingBlogs();
 
     expect(response).toHaveLength(helper.initialBlogs.length + 1);
-    const blogsWithoutId: Blog[] = response.map((blog: Blog) => ({
+    const blogsWithoutId = response.map((blog: Blog) => ({
       title: blog.title,
       author: blog.author,
       url: blog.url,
@@ -68,8 +68,39 @@ describe('blog api tests', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
-    const lastAddedBlog: Blog | null = await BlogModel.findOne({ title: 'Deep Dive Into Modern Web Development' });
+    const response: Blog[] = await helper.getExistingBlogs();
+    expect(response).toHaveLength(helper.initialBlogs.length + 1);
+
+    const lastAddedBlog: Blog | undefined = response.find(
+      (blog: Blog) => blog.title === 'Deep Dive Into Modern Web Development'
+    );
     expect(lastAddedBlog?.likes).toBe(0);
+  });
+
+  test('status 400 if title is missing', async () => {
+    const newBlogWithoutLikes = {
+      author: 'Matti Luukkainen',
+      url: 'https://fullstackopen.com/en/',
+      likes: 2,
+    };
+
+    await api.post('/api/blogs').send(newBlogWithoutLikes).expect(400);
+
+    const response: Blog[] = await helper.getExistingBlogs();
+    expect(response).toHaveLength(helper.initialBlogs.length);
+  }, 30000);
+
+  test('status 400 if url is missing', async () => {
+    const newBlogWithoutLikes = {
+      title: 'Deep Dive Into Modern Web Development',
+      author: 'Matti Luukkainen',
+      likes: 2,
+    };
+
+    await api.post('/api/blogs').send(newBlogWithoutLikes).expect(400);
+
+    const response: Blog[] = await helper.getExistingBlogs();
+    expect(response).toHaveLength(helper.initialBlogs.length);
   });
 });
 

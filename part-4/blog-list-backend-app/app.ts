@@ -5,11 +5,11 @@ const cors = require('cors');
 const middleware = require('./utils/middleware');
 const logger = require('./utils/logger');
 const config = require('./utils/config');
-const blogsRouter = require('./controllers/blogs');
-
-require('express-async-errors');
 
 const app: Application = express();
+require('express-async-errors');
+
+const blogsRouter = require('./controllers/blogs');
 
 mongoose.set('strictQuery', false);
 logger.info('connection to:', config.MONGODB_URI);
