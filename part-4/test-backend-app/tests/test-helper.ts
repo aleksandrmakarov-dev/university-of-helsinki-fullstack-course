@@ -1,7 +1,9 @@
 import { Model } from 'mongoose';
 import { Note } from '../models/note';
+import { User, UserDTO } from '../models/user';
 
 const NoteModel: Model<Note> = require('../models/note');
+const UserModel: Model<User> = require('../models/user');
 
 const initialNotes: Note[] = [
   {
@@ -34,8 +36,14 @@ const notesIdDb = async (): Promise<Note[]> => {
   return notes;
 };
 
+const usersInDb = async (): Promise<UserDTO[]> => {
+  const users: UserDTO[] = (await UserModel.find()).map(user => user.toJSON());
+  return users;
+};
+
 module.exports = {
   initialNotes,
   nonExistingId,
   notesIdDb,
+  usersInDb,
 };

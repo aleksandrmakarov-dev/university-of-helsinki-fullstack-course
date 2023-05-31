@@ -8,7 +8,10 @@ const middleware = require('./utils/middleware');
 
 const app: Application = express();
 require('express-async-errors');
+
+// Routers initialization
 const notesRouter: Router = require('./controllers/notes');
+const usersRouter: Router = require('./controllers/users');
 
 mongoose.set('strictQuery', false);
 logger.info('connecting to:', config.MONGODB_URI);
@@ -29,6 +32,7 @@ app.use(express.static('build'));
 app.use(express.json());
 app.use(middleware.requestLogger);
 
+app.use('/api/users', usersRouter);
 app.use('/api/notes', notesRouter);
 
 app.use(middleware.unknownEndpoint);

@@ -16,7 +16,13 @@ router.get('/', async (req: Request, res: Response) => {
 
 // POST new blog
 router.post('/', async (req: Request, res: Response) => {
-  const newBlog: Blog = req.body as Blog;
+  const { title, author, url, likes } = req.body;
+  const newBlog: Blog = {
+    title,
+    author,
+    url,
+    likes,
+  };
   const createdBlog: Blog = await BlogModel.create(newBlog);
   res.status(201).json(createdBlog);
 });
