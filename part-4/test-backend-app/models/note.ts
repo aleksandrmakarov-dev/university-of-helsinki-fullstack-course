@@ -1,10 +1,10 @@
 import mongoose, { Schema } from 'mongoose';
 
-export interface Note {
+export interface Note extends mongoose.Document {
   id: string;
   content: string;
   important: boolean;
-  user?: any;
+  user: mongoose.Types.ObjectId;
 }
 
 const noteSchema = new Schema<Note>({
@@ -28,4 +28,4 @@ noteSchema.set('toJSON', {
   },
 });
 
-module.exports = mongoose.model('Note', noteSchema);
+module.exports = mongoose.model<Note>('Note', noteSchema);

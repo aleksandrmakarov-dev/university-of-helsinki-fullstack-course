@@ -2,7 +2,7 @@ import mongoose, { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import supertest from 'supertest';
 import { Application } from 'express';
-import { User, UserDTO } from '../models/user';
+import { User } from '../models/user';
 
 const app: Application = require('../app');
 const helper = require('./test-helper');
@@ -16,17 +16,17 @@ describe('when there is initially one user in db', () => {
   beforeEach(async () => {
     await UserModel.deleteMany();
     const passwordHash: string = await bcrypt.hashSync('admin', saltLength);
-    const rootUser: User = {
+    const rootUser: User = new UserModel({
       username: 'root',
       name: 'root',
       passwordHash,
-    };
+    });
 
     await UserModel.create(rootUser);
   });
 
   test('creation succeeds with a fresh username', async () => {
-    const usersBefore: UserDTO[] = await helper.usersInDb();
+    const usersBefore: User[] = await helper.usersInDb();
 
     const newUser = {
       username: 'alex',
@@ -40,16 +40,16 @@ describe('when there is initially one user in db', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
-    const usersAfter: UserDTO[] = await helper.usersInDb();
+    const usersAfter: User[] = await helper.usersInDb();
     expect(usersAfter).toHaveLength(usersBefore.length + 1);
 
-    const usernames: string[] = usersAfter.map((user: UserDTO) => user.username);
+    const usernames: string[] = usersAfter.map((user: User) => user.username);
 
     expect(usernames).toContain(newUser.username);
   });
 
   test('creation fails with proper statuscode and message if username already taken', async () => {
-    const usersBefore: UserDTO[] = await helper.usersInDb();
+    const usersBefore: User[] = await helper.usersInDb();
 
     const newUser = {
       username: 'root',
@@ -66,7 +66,7 @@ describe('when there is initially one user in db', () => {
     const { error } = result.body;
     expect(error).toContain('expected `username` to be unique');
 
-    const usersAfter: UserDTO[] = await helper.usersInDb();
+    const usersAfter: User[] = await helper.usersInDb();
     expect(usersAfter).toHaveLength(usersBefore.length);
   });
 });

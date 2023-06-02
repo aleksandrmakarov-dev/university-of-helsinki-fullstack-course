@@ -1,18 +1,14 @@
 import mongoose, { Schema } from 'mongoose';
+import { Note } from './note';
 
 const uniqueValidator = require('mongoose-unique-validator')
 
-export interface User {
+export interface User extends mongoose.Document {
+  id: string;
   username: string;
   name: string;
   passwordHash: string;
-  notes?: any;
-}
-
-export interface UserDTO {
-  username: string;
-  name: string;
-  notes?: any;
+  notes: mongoose.Types.Array<Note>;
 }
 
 const userSchema: Schema<User> = new mongoose.Schema<User>({
@@ -39,4 +35,4 @@ userSchema.set('toJSON', {
 
 userSchema.plugin(uniqueValidator);
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model<User>('User', userSchema);
