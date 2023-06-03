@@ -20,7 +20,7 @@ const UserModel: Model<User> = require('../models/user');
 
 // GET all blogs
 router.get('/', async (req: Request, res: Response) => {
-  const existingBlogs: Blog[] = await BlogModel.find();
+  const existingBlogs: Blog[] = await BlogModel.find().populate('user', { blogs: 0 });
   res.json(existingBlogs);
 });
 
