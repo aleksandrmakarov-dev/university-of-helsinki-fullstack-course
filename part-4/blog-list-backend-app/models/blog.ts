@@ -1,12 +1,13 @@
 import mongoose, { Schema } from 'mongoose';
 
 // Blog interface
-export interface Blog {
-  id?: string;
+export interface Blog extends mongoose.Document {
+  id: string;
   title: string;
   author: string;
   url: string;
   likes: number;
+  user: mongoose.Types.ObjectId;
 }
 
 // Mogoose blog schema
@@ -15,6 +16,10 @@ const blogSchema: Schema<Blog> = new mongoose.Schema<Blog>({
   author: { type: String, required: true },
   url: { type: String, required: true },
   likes: { type: Number, default: 0 },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
 });
 
 // Mongoose transformation to JSON add property id:string, delete properties _id and __v

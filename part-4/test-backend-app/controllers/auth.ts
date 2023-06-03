@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { Model } from 'mongoose';
 import { User } from '../models/user';
+import { TokenPayload } from '../utils/middleware';
 
 const router: Router = express.Router();
 const UserModel: Model<User> = require('../models/user');
@@ -28,7 +29,7 @@ router.post('/login', async (req: Request, res: Response) => {
     throw new Error('internal server error');
   }
 
-  const token: string = jwt.sign(tokenPayload, secretKey);
+  const token: string = jwt.sign(tokenPayload, secretKey, { expiresIn: 1 * 60 });
 
   return res.status(200).send({ token, username: user.username, name: user.name });
 });

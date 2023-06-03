@@ -17,14 +17,22 @@ const errorHandler = (error: Error, req: Request, res: Response, _next: NextFunc
     logger.error('malformatted id');
     return res.status(400).json({ error: 'malformatted id' });
   }
+
   if (error instanceof mongoose.Error.ValidationError) {
     logger.error('validation error:', error.message);
     return res.status(400).json({ error: error.message });
   }
+
   if (error instanceof jwt.JsonWebTokenError) {
     logger.error('jwt token error', error.message);
     return res.status(400).json({ error: error.message });
   }
+
+  if (error instanceof jwt.TokenExpiredError) {
+    logger.error('jwt token expired');
+    return res.status(401).json({ error: error.message });
+  }
+
   logger.error('internal server error');
   return res.status(500).json({ error: error?.message });
 };
@@ -36,6 +44,7 @@ const unknownEndpoint = (_req: Request, res: Response) => {
 export interface TokenPayload {
   id: string;
   username: string;
+  exp: number;
 }
 
 export interface AuthorizeRequest extends Request {

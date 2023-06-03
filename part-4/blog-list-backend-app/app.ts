@@ -1,4 +1,4 @@
-import express, { Application } from 'express';
+import express, { Application, Router } from 'express';
 import mongoose from 'mongoose';
 
 const cors = require('cors');
@@ -9,7 +9,8 @@ const config = require('./utils/config');
 const app: Application = express();
 require('express-async-errors');
 
-const blogsRouter = require('./controllers/blogs');
+const blogsRouter: Router = require('./controllers/blogs');
+const usersRouter: Router = require('./controllers/users');
 
 mongoose.set('strictQuery', false);
 logger.info('connection to:', config.MONGODB_URI);
@@ -31,6 +32,7 @@ app.use(middleware.requestLogger);
 
 // Blog routes
 app.use('/api/blogs', blogsRouter);
+app.use('/api/users', usersRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
