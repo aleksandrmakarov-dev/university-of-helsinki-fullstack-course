@@ -14,7 +14,7 @@ const UserModel: Model<User> = require('../models/user');
 
 // GET all users
 router.get('/', async (req: Request, res: Response) => {
-  const users: User[] = await UserModel.find().populate('blogs', { user: 0 });
+  const users: User[] = await UserModel.find().populate('blogs', { user: 0, likes: 0 });
   return res.json(users);
 });
 
