@@ -1,9 +1,24 @@
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { Blog } from '../models/blog';
+import { User } from '../models/user';
+
+export interface UserDTO {
+  id: string;
+  username: string;
+  name: string;
+  blogs: mongoose.Types.Array<Blog>;
+}
 
 const BlogModel: Model<Blog> = require('../models/blog');
+const UserModel: Model<User> = require('../models/user');
 
-const initialBlogs: Blog[] = [
+const rootUser = {
+  username: 'root',
+  name: 'Root User',
+  password: 'root123',
+};
+
+const initialBlogs = [
   {
     id: '5a422a851b54a676234d17f7',
     title: 'React patterns',
@@ -48,12 +63,19 @@ const initialBlogs: Blog[] = [
   },
 ];
 
-const getExistingBlogs = async (): Promise<Blog[]> => {
+const getBlogsInDb = async (): Promise<Blog[]> => {
   const existingBlogs: Blog[] = (await BlogModel.find()).map(blog => blog.toJSON());
   return existingBlogs;
 };
 
+const getUsersInDb = async (): Promise<UserDTO[]> => {
+  const existingUsers: UserDTO[] = (await UserModel.find()).map(user => user.toJSON());
+  return existingUsers;
+};
+
 module.exports = {
+  rootUser,
   initialBlogs,
-  getExistingBlogs,
+  getBlogsInDb,
+  getUsersInDb,
 };

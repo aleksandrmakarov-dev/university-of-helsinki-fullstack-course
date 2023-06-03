@@ -12,19 +12,19 @@ const api = supertest(app);
 
 const saltLength = 10;
 
-describe('when there is initially one user in db', () => {
-  beforeEach(async () => {
-    await UserModel.deleteMany();
-    const passwordHash: string = await bcrypt.hashSync('admin', saltLength);
-    const rootUser: User = new UserModel({
-      username: 'root',
-      name: 'root',
-      passwordHash,
-    });
-
-    await UserModel.create(rootUser);
+beforeEach(async () => {
+  await UserModel.deleteMany();
+  const passwordHash: string = await bcrypt.hashSync('admin', saltLength);
+  const rootUser: User = new UserModel({
+    username: 'root',
+    name: 'root',
+    passwordHash,
   });
 
+  await UserModel.create(rootUser);
+});
+
+describe('when there is initially one user in db', () => {
   test('creation succeeds with a fresh username', async () => {
     const usersBefore: User[] = await helper.usersInDb();
 

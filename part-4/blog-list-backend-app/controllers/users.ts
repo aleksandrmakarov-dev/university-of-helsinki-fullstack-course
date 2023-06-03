@@ -22,6 +22,14 @@ router.get('/', async (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
   const { username, name, password }: UserCreateRequest = req.body;
 
+  const minLength = 3;
+
+  if (password.length < minLength) {
+    return res.status(400).json({
+      error: `User validation failed: username: Path \`password\` is shorter than the minimum allowed length (${minLength}).`,
+    });
+  }
+
   const saltRounds = 10;
   const passwordHash: string = await bcrypt.hash(password, saltRounds);
 

@@ -24,18 +24,18 @@ describe('blog api tests', () => {
   });
 
   test('blog has id property', async () => {
-    const existingBlogs: Blog[] = await helper.getExistingBlogs();
+    const existingBlogs: Blog[] = await helper.getBlogsInDb();
     const firstBlog: Blog = existingBlogs[0];
     expect(firstBlog.id).toBeDefined();
   });
 
   test('successfully creates a new blog post', async () => {
-    const newBlog: Blog = {
+    const newBlog: Blog = new BlogModel({
       title: 'Deep Dive Into Modern Web Development',
       author: 'Matti Luukkainen',
       url: 'https://fullstackopen.com/en/',
       likes: 2,
-    };
+    });
 
     await api
       .post('/api/blogs')
@@ -43,7 +43,7 @@ describe('blog api tests', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
-    const response: Blog[] = await helper.getExistingBlogs();
+    const response: Blog[] = await helper.getBlogsInDb();
 
     expect(response).toHaveLength(helper.initialBlogs.length + 1);
     const blogsWithoutId = response.map((blog: Blog) => ({
@@ -68,7 +68,7 @@ describe('blog api tests', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
-    const response: Blog[] = await helper.getExistingBlogs();
+    const response: Blog[] = await helper.getBlogsInDb();
     expect(response).toHaveLength(helper.initialBlogs.length + 1);
 
     const lastAddedBlog: Blog | undefined = response.find(
@@ -86,7 +86,7 @@ describe('blog api tests', () => {
 
     await api.post('/api/blogs').send(newBlogWithoutLikes).expect(400);
 
-    const response: Blog[] = await helper.getExistingBlogs();
+    const response: Blog[] = await helper.getBlogsInDb();
     expect(response).toHaveLength(helper.initialBlogs.length);
   }, 30000);
 
@@ -99,7 +99,7 @@ describe('blog api tests', () => {
 
     await api.post('/api/blogs').send(newBlogWithoutLikes).expect(400);
 
-    const response: Blog[] = await helper.getExistingBlogs();
+    const response: Blog[] = await helper.getBlogsInDb();
     expect(response).toHaveLength(helper.initialBlogs.length);
   });
 });
