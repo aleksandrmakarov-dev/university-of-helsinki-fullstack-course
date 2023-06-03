@@ -11,6 +11,7 @@ require('express-async-errors');
 
 const blogsRouter: Router = require('./controllers/blogs');
 const usersRouter: Router = require('./controllers/users');
+const authRouter: Router = require('./controllers/auth');
 
 mongoose.set('strictQuery', false);
 logger.info('connection to:', config.MONGODB_URI);
@@ -32,7 +33,10 @@ app.use(middleware.requestLogger);
 
 // Blog routes
 app.use('/api/blogs', blogsRouter);
+// User routes
 app.use('/api/users', usersRouter);
+// Auth routes
+app.use('/api/auth', authRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
