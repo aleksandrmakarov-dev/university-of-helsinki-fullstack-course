@@ -1,14 +1,15 @@
-import express, { Request, Response, Router } from 'express';
+import express, { Request, Response, Router, application, json } from 'express';
 import { Model } from 'mongoose';
 import { Blog } from '../models/blog';
 import { User } from '../models/user';
+import { TokenAuthorizeRequest } from '../utils/middleware';
+import { InternalError, NotFoundError, UnAuthorizedError } from '../utils/custom-errors';
 
 interface BlogCreateRequest {
   title: string;
   author: string;
   url: string;
   likes: string;
-  userId: string;
 }
 
 // Express router
@@ -25,13 +26,17 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 // POST new blog
-router.post('/', async (req: Request, res: Response) => {
-  const { title, author, url, likes, userId }: BlogCreateRequest = req.body;
+router.post('/', async (req: TokenAuthorizeRequest, res: Response) => {
+  const { title, author, url, likes }: BlogCreateRequest = req.body;
 
-  const user: User | null = await UserModel.findById(userId);
+  if (!req.user) {
+    throw new UnAuthorizedError('invalid token');
+  }
+
+  const user: User | null = await UserModel.findById(req.user.id);
 
   if (user === null) {
-    return res.status(400).json({ error: `user with id = ${userId} not found` });
+    throw new NotFoundError(`user with id = ${req.user.id} not found`);
   }
 
   const newBlog: Blog = new BlogModel({
@@ -47,6 +52,33 @@ router.post('/', async (req: Request, res: Response) => {
   await user.save();
 
   return res.status(201).json(createdBlog);
+});
+
+// DELETE blog
+
+router.delete('/:id', async (req: TokenAuthorizeRequest, res: Response) => {
+  if (!req.user) {
+    throw new UnAuthorizedError('invalid token');
+  }
+
+  const id = req.params.id;
+
+  const blog: Blog | null = await BlogModel.findById(id);
+
+  if (blog === null) {
+    throw new NotFoundError(`blog with id = ${id} not found`);
+  }
+
+  if (blog.user.toString() !== req.user.id.toString()) {
+    throw new UnAuthorizedError('a blog can be deleted only by the user who added the blog');
+  }
+
+  const removedBlog: Blog | null = await BlogModel.findByIdAndDelete(id);
+
+  if (removedBlog === null) {
+    throw new InternalError('internal error while deleting blog from database');
+  }
+  return res.status(204).send();
 });
 
 module.exports = router;

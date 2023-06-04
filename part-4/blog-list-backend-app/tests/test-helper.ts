@@ -1,6 +1,9 @@
 import mongoose, { Model } from 'mongoose';
+import * as jwt from 'jsonwebtoken';
 import { Blog } from '../models/blog';
 import { User } from '../models/user';
+
+const config = require('../utils/config');
 
 export interface UserDTO {
   id: string;
@@ -12,11 +15,18 @@ export interface UserDTO {
 const BlogModel: Model<Blog> = require('../models/blog');
 const UserModel: Model<User> = require('../models/user');
 
-const rootUser = {
-  username: 'root',
-  name: 'Root User',
-  password: 'root123',
-};
+const initialUsers = [
+  {
+    username: 'root',
+    name: 'Root User',
+    password: 'root123',
+  },
+  {
+    username: 'alex',
+    name: 'Alex',
+    password: 'alex123',
+  },
+];
 
 const initialBlogs = [
   {
@@ -63,19 +73,69 @@ const initialBlogs = [
   },
 ];
 
-const getBlogsInDb = async (): Promise<Blog[]> => {
+const getBlogsInDb = async () => {
   const existingBlogs: Blog[] = (await BlogModel.find()).map(blog => blog.toJSON());
   return existingBlogs;
 };
 
-const getUsersInDb = async (): Promise<UserDTO[]> => {
+const getUsersInDb = async () => {
   const existingUsers: UserDTO[] = (await UserModel.find()).map(user => user.toJSON());
   return existingUsers;
 };
 
+const getRootUserInDb = async () => {
+  const user: User | null = await UserModel.findOne({ username: initialUsers[0].username });
+  return user?.toJSON();
+};
+
+const getRootUserToken = async () => {
+  const user: User | null = await UserModel.findOne({ username: initialUsers[0].username });
+  if (user === null) {
+    throw new Error('root user is undefined');
+  }
+
+  const payload = {
+    id: user.id,
+    username: user.username,
+  };
+
+  const secret = config.SECRET;
+
+  if (!secret) {
+    throw new Error('secret key is undefined');
+  }
+
+  const token = jwt.sign(payload, secret);
+  return token;
+};
+
+const getAnotherUserToken = async () => {
+  const user: User | null = await UserModel.findOne({ username: initialUsers[1].username });
+  if (user === null) {
+    throw new Error('root user is undefined');
+  }
+
+  const payload = {
+    id: user.id,
+    username: user.username,
+  };
+
+  const secret = config.SECRET;
+
+  if (!secret) {
+    throw new Error('secret key is undefined');
+  }
+
+  const token = jwt.sign(payload, secret);
+  return token;
+};
+
 module.exports = {
-  rootUser,
+  initialUsers,
   initialBlogs,
   getBlogsInDb,
   getUsersInDb,
+  getRootUserInDb,
+  getRootUserToken,
+  getAnotherUserToken,
 };

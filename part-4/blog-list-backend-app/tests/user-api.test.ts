@@ -15,22 +15,21 @@ const api = supertest(app);
 const saltLength = 10;
 
 beforeEach(async () => {
-  await UserModel.deleteMany();
   await BlogModel.deleteMany();
+  await UserModel.deleteMany();
 
-  const rootUserData = helper.rootUser;
-
-  const passwordHash = await bcrypt.hash(rootUserData.password, saltLength);
-
-  const rootUser: User = new UserModel({
-    id: rootUserData.id,
-    username: rootUserData.username,
-    name: rootUserData.name,
-    passwordHash,
+  const userPromises: Promise<User>[] = helper.initialUsers.map(async (user: any) => {
+    const newUser: User = new UserModel({ ...user, passwordHash: await bcrypt.hash(user.password, saltLength) });
+    return UserModel.create(newUser);
   });
 
-  // Create root user
-  const user: User = await UserModel.create(rootUser);
+  const users: User[] = await Promise.all(userPromises);
+
+  const user: User | undefined = users.find((u: User) => u.username === helper.initialUsers[0].username);
+
+  if (!user) {
+    throw new Error('root user is undefined');
+  }
 
   // Map blog so it has root user as owner and it as promise
   const promises: Promise<Blog>[] = helper.initialBlogs.map((blog: any) => {
@@ -44,7 +43,7 @@ beforeEach(async () => {
   user.blogs.push(...createdBlogs.map((blog: Blog) => blog.id));
   // Update user
   await user.save();
-});
+}, 30000);
 
 describe('test user post endpoint', () => {
   test('create valid user', async () => {
@@ -67,7 +66,7 @@ describe('test user post endpoint', () => {
     expect(usersAfter).toHaveLength(usersBefore.length + 1);
     const usernames: string[] = usersAfter.map((user: UserDTO) => user.username);
     expect(usernames).toContain(userBody.username);
-  });
+  }, 20000);
 
   test('only unique username', async () => {
     const usersBefore: UserDTO[] = await helper.getUsersInDb();

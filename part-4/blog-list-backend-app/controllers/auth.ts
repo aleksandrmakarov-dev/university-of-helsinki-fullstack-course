@@ -1,8 +1,9 @@
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import mongoose, { Model } from 'mongoose';
+import { Model } from 'mongoose';
 import express, { Request, Response, Router } from 'express';
 import { User } from '../models/user';
+import { InternalError, UnAuthorizedError, ValidationError } from '../utils/custom-errors';
 
 interface LoginRequest {
   username: string;
@@ -11,16 +12,17 @@ interface LoginRequest {
 
 const router: Router = express.Router();
 const UserModel: Model<User> = require('../models/user');
+const config = require('../utils/config');
 
 router.post('/login', async (req: Request, res: Response) => {
   const { username, password }: LoginRequest = req.body;
 
   if (!username) {
-    return res.status(400).json({ error: '`username` is required' });
+    throw new ValidationError('`username` is required');
   }
 
   if (!password) {
-    return res.status(400).json({ error: '`password` is required' });
+    throw new ValidationError('`password` is required');
   }
 
   const user: User | null = await UserModel.findOne({ username });
@@ -28,13 +30,13 @@ router.post('/login', async (req: Request, res: Response) => {
   const passwordCheck: boolean = user === null ? false : await bcrypt.compare(password, user.passwordHash);
 
   if (!(user && passwordCheck)) {
-    return res.status(401).json({ error: 'invalid username or password' });
+    throw new UnAuthorizedError('invalid username or password');
   }
 
-  const secret: string | undefined = process.env.SECRET;
+  const secret: string | undefined = config.SECRET;
 
   if (!secret) {
-    throw new Error('secret key is undefined');
+    throw new InternalError('secret key is undefined');
   }
 
   const payload = {

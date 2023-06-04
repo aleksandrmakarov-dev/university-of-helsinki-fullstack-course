@@ -33,6 +33,7 @@
         "import/no-unresolved":"off",
         "@typescript-eslint/no-var-requires":"warn",
         "import/extensions":"off",
-        "indent":"off"
+        "indent":"off",
+        "max-classes-per-file":"off"
     }
 }

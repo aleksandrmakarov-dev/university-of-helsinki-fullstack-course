@@ -17,8 +17,8 @@ mongoose.set('strictQuery', false);
 logger.info('connection to:', config.MONGODB_URI);
 
 // Establish connection
-mongoose
-  .connect(config.MONGODB_URI)
+
+mongoose.connect(config.MONGODB_URI)
   .then(() => {
     logger.info('connected to MongoDB');
   })
@@ -32,7 +32,7 @@ app.use(express.json());
 app.use(middleware.requestLogger);
 
 // Blog routes
-app.use('/api/blogs', blogsRouter);
+app.use('/api/blogs', middleware.userExtractor, blogsRouter);
 // User routes
 app.use('/api/users', usersRouter);
 // Auth routes
