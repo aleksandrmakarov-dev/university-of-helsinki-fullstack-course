@@ -58,10 +58,17 @@ const App:FC = () =>{
         addToast('Receive notes',data.error,'error',5000);
       }
     }
-
     receiveNotes();
-    
   },[])
+
+  useEffect(() => {
+    const json = window.localStorage.getItem('user');
+    if(json){
+      const userObject:User = JSON.parse(json);
+      setUser(userObject);
+      noteService.setToken(userObject.token); 
+    }
+  },[]);
 
   useEffect(() => {
     toastsRef.current = toasts;
@@ -122,12 +129,19 @@ const App:FC = () =>{
 
       setUser(user);
       noteService.setToken(user.token);
+      window.localStorage.setItem('user',JSON.stringify(user));
+
       setUsername('');
       setPassword('');
       addToast('Log in account','Successfully logged in','success',5000);
     }catch(ex){
       addToast('Log in account','Invalid username or password','error',5000);
     }
+  }
+
+  const OnLogoutClick = () => {
+    window.localStorage.removeItem('user');
+    setUser(null);
   }
 
   const addToast = (title:string, text:string, type:'success' | 'error', timeout:number) =>{
@@ -163,7 +177,7 @@ const App:FC = () =>{
     <div className='max-w-5xl mx-auto flex flex-col gap-4'>
 
     <LoginForm user={user} username={username} password={password} onUsernameChange={OnUsernameChange} onPasswordChange={OnPasswordChange} onFormSubmit={OnLoginFormSubmit}/>
-    <UserItem user={user}/>
+    <UserItem user={user} onLogoutClick={OnLogoutClick}/>
 
       <div className='border-b pb-2 border-gray-200 flex justify-between items-center'>
         <h1 className='text-3xl font-semibold'>Notes</h1>
