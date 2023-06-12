@@ -1,13 +1,12 @@
 import {FC, FormEventHandler, useEffect, useRef, useState} from 'react';
 import Note from './components/note/Note';
 import noteService from './services/note-service';
-import Notification from './components/toast-list/toast-list';
 import authService, { User } from './services/auth-service';
 import { v4 as uuidv4 } from 'uuid';
 import LoginForm from './components/login-form/login-form';
-import UserItem from './components/user-item/user-item';
 import NoteForm from './components/note-form/note-form';
-import { AnyMxRecord } from 'dns';
+import UserItem from './components/user-item/user-item';
+import ToastList from './components/toast-list/toast-list';
 
 export interface INote{
   id:string,
@@ -195,7 +194,7 @@ const App:FC = () =>{
         )}
       </ul>
     </div>
-    <Notification data={toasts} OnToastClose={OnToastClose}/>
+    <ToastList data={toasts} OnToastClose={OnToastClose}/>
   </div>
   );
 }

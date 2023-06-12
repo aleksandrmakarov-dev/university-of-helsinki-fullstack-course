@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import Toast from '../toast/toast';
-import { ToastData } from '../../App';
+import ToastData from '../../models/toast-data';
 
 interface ToastListProps {
   data:ToastData[];
