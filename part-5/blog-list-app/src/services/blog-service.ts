@@ -1,6 +1,7 @@
 import axios from "axios"
 import Blog from "../models/blog";
 import BlogCreateRequest from "../models/blog-create-request";
+import BlogUpdateRequest from "../models/blog-update-request";
 
 const baseUrl = '/api/blogs';
 
@@ -23,8 +24,15 @@ const create = async (request: BlogCreateRequest) => {
   return response.data;
 }
 
+const update = async (id: string, request: BlogUpdateRequest) => {
+
+  const response = await axios.put<Blog>(baseUrl + '/' + id, request);
+  return response.data;
+}
+
 export default {
   getAll,
   setToken,
-  create
+  create,
+  update
 }

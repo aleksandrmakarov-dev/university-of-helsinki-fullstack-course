@@ -1,5 +1,4 @@
 import { FC, FormEventHandler, useState } from 'react';
-import { User } from '../../models/user';
 
 interface LoginFormProps {
   OnLoginUser:(username:string,password:string) => Promise<boolean>;

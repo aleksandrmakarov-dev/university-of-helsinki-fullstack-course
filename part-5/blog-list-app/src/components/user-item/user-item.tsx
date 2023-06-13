@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import './user-item.css';
-import User from '../../models/user';
+import AuthorizedUser from '../../models/authorized-user';
 
 
 interface UserItemProps {
-  user:User | null;
+  user:AuthorizedUser | null;
   onLogoutClick:() => void;
 }
 

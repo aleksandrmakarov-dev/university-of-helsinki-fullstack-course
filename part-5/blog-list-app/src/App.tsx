@@ -6,12 +6,13 @@ import BlogItem from './components/blog-item/blog-item';
 import BlogForm from './components/blog-form/blog-form';
 import UserItem from './components/user-item/user-item';
 import LoginForm from './components/login-form/login-form';
-import User from './models/user';
+import AuthorizedUser from './models/authorized-user';
 import authService from './services/auth-service';
 import Blog from './models/blog';
 import blogService from './services/blog-service';
 import BlogCreateRequest from './models/blog-create-request';
 import ToggleContainer, { ToggleHandle } from './components/toggle-container/toggle-container';
+import BlogUpdateRequest from './models/blog-update-request';
 
 const App = () => {
 
@@ -20,7 +21,7 @@ const App = () => {
   const [toasts,setToasts] = useState<ToastData[]>([]);
   const toastsRef = useRef<ToastData[]>([]);
 
-  const [user,setUser] = useState<User | null>(null);
+  const [user,setUser] = useState<AuthorizedUser | null>(null);
 
   const blogFormRef = useRef<ToggleHandle>(null);
 
@@ -44,7 +45,7 @@ const App = () => {
   useEffect(() => {
     const json = window.localStorage.getItem('user');
     if(json){
-      const userObject:User = JSON.parse(json);
+      const userObject:AuthorizedUser = JSON.parse(json);
       setUser(userObject);
       blogService.setToken(userObject.token); 
     }
@@ -67,7 +68,7 @@ const App = () => {
     setToasts(toasts.concat(newToast));
   }
 
-  const OnToastClose = (id:string) =>{
+  const OnToastClose = (id:string) => {
 
     const toast = toastsRef.current.find((toast:ToastData) => toast.id === id);
     clearTimeout(toast?.timer);
@@ -79,7 +80,7 @@ const App = () => {
   const OnLoginUser = async (username:string,password:string) => {
 
     try{
-      const user:User = await authService.login({
+      const user:AuthorizedUser = await authService.login({
         username,
         password
       });
@@ -100,7 +101,7 @@ const App = () => {
     setUser(null);
   }
 
-  const OnCreateNewBlog = async (obj:BlogCreateRequest):Promise<boolean> =>{
+  const OnCreateNewBlog = async (obj:BlogCreateRequest):Promise<boolean> => {
     try{
       const response:Blog = await blogService.create(obj); 
       setBlogs(blogs.concat(response));
@@ -110,6 +111,18 @@ const App = () => {
     }catch(ex:any){
       addToast('Create new blog',ex.response.data.error,'error',5000);
     }
+    return false;
+  }
+
+  const OnUpdateBlog = async (id:string, obj:BlogUpdateRequest):Promise<boolean> => {
+    try{
+      const updatedBlog:Blog = await blogService.update(id,obj);
+      setBlogs(blogs.map((blog:Blog) => blog.id === id ? updatedBlog : blog));
+      return true;
+    }catch(ex:any){
+      addToast('Update blog',ex.response.data.error,'error',5000);
+    }
+
     return false;
   }
 
@@ -127,7 +140,7 @@ const App = () => {
           <h1 className='text-3xl'>Blogs</h1>
         </div>
         <div className='flex flex-col gap-2'>
-          {blogs.map((blog:Blog) => <BlogItem key={blog.id} data={blog}/>)}
+          {blogs.map((blog:Blog) => <BlogItem key={blog.id} data={blog} onUpdate={OnUpdateBlog}/>)}
         </div>
         <ToastList data={toasts} OnToastClose={OnToastClose}/>
         {
