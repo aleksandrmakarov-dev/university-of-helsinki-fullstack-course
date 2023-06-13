@@ -2,13 +2,16 @@ import React, { FC, useState } from 'react';
 import './blog-item.css';
 import Blog from '../../models/blog';
 import BlogUpdateRequest from '../../models/blog-update-request';
+import AuthorizedUser from '../../models/authorized-user';
 
 interface BlogItemProps {
   data:Blog;
   onUpdate:(id:string,obj:BlogUpdateRequest) => Promise<boolean>;
+  user:AuthorizedUser | null;
+  onRemove:(id:string) => Promise<boolean>;
 }
 
-const BlogItem: FC<BlogItemProps> = ({data, onUpdate}) => {
+const BlogItem: FC<BlogItemProps> = ({data, onUpdate, user, onRemove}) => {
 
   const [visible, setVisible] = useState<boolean>(false);
 
@@ -19,6 +22,13 @@ const BlogItem: FC<BlogItemProps> = ({data, onUpdate}) => {
   const onLikeBlog = async () => {
     const obj:BlogUpdateRequest = {...data,likes:data.likes + 1, user:data.user.id};
     await onUpdate(data.id,obj);
+  }
+
+  const onRemoveBlog = async () => {
+    const result = window.confirm(`Are you sure you want to delete blog "${data.title}" by ${data.author}?`);
+    if(result){
+      await onRemove(data.id);
+    }
   }
 
   return(
@@ -46,6 +56,12 @@ const BlogItem: FC<BlogItemProps> = ({data, onUpdate}) => {
             </button>
             <p>{data.likes}</p>
           </div>
+          {user && 
+            (<button className='text-gray-600 transition-colors p-2 hover:text-red-500' onClick={onRemoveBlog}>
+              <svg xmlns="http://www.w3.org/2000/svg" className='w-4 h-4' fill='currentColor' viewBox="0 0 448 512">
+                <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/>
+              </svg>
+            </button>)}
         </div>
       </div>
     </div>

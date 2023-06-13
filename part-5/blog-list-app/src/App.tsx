@@ -126,6 +126,18 @@ const App = () => {
     return false;
   }
 
+  const OnRemoveBlog = async (id:string):Promise<boolean> => {
+    try{
+      await blogService.remove(id);
+      addToast('Delete blog','Blog has been deleted successfully','success',5000);
+      setBlogs(blogs.filter((blog:Blog) => blog.id !== id));
+      return true;
+    }catch(ex:any){
+      addToast('Delete blog',ex.response.data.error,'error',5000);
+    }
+    return false;
+  }
+
   const sortedArray = [...blogs].sort((a,b)=>a.likes > b.likes ? -1: 1);
 
   return(
@@ -142,7 +154,7 @@ const App = () => {
           <h1 className='text-3xl'>Blogs</h1>
         </div>
         <div className='flex flex-col gap-2'>
-          {sortedArray.map((blog:Blog) => <BlogItem key={blog.id} data={blog} onUpdate={OnUpdateBlog}/>)}
+          {sortedArray.map((blog:Blog) => <BlogItem key={blog.id} data={blog} onUpdate={OnUpdateBlog} user={user} onRemove={OnRemoveBlog}/>)}
         </div>
         <ToastList data={toasts} OnToastClose={OnToastClose}/>
         {
