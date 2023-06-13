@@ -126,6 +126,8 @@ const App = () => {
     return false;
   }
 
+  const sortedArray = [...blogs].sort((a,b)=>a.likes > b.likes ? -1: 1);
+
   return(
     <div className='min-h-screen bg-gray-50 py-8'>
       <div className='max-w-5xl mx-auto flex flex-col gap-y-4'>
@@ -140,7 +142,7 @@ const App = () => {
           <h1 className='text-3xl'>Blogs</h1>
         </div>
         <div className='flex flex-col gap-2'>
-          {blogs.map((blog:Blog) => <BlogItem key={blog.id} data={blog} onUpdate={OnUpdateBlog}/>)}
+          {sortedArray.map((blog:Blog) => <BlogItem key={blog.id} data={blog} onUpdate={OnUpdateBlog}/>)}
         </div>
         <ToastList data={toasts} OnToastClose={OnToastClose}/>
         {
