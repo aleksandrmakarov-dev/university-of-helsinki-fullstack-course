@@ -11,6 +11,7 @@ import authService from './services/auth-service';
 import Blog from './models/blog';
 import blogService from './services/blog-service';
 import BlogCreateRequest from './models/blog-create-request';
+import ToggleContainer, { ToggleHandle } from './components/toggle-container/toggle-container';
 
 const App = () => {
 
@@ -19,20 +20,9 @@ const App = () => {
   const [toasts,setToasts] = useState<ToastData[]>([]);
   const toastsRef = useRef<ToastData[]>([]);
 
-  const [username, setUsername] = useState<string>('');
-  const OnUsernameChange:FormEventHandler<HTMLInputElement> = (e) => setUsername(e.currentTarget.value);
-
-  const [password, setPassword] = useState<string>('');
-  const OnPasswordChange:FormEventHandler<HTMLInputElement> = (e) => setPassword(e.currentTarget.value);
-
   const [user,setUser] = useState<User | null>(null);
 
-  const [title, setTitle] = useState<string>('');
-  const OnTitleChange:FormEventHandler<HTMLInputElement> = (e) => setTitle(e.currentTarget.value);
-  const [author, setAuthor] = useState<string>('');
-  const OnAuthorChange:FormEventHandler<HTMLInputElement> = (e) => setAuthor(e.currentTarget.value);
-  const [url, setUrl] = useState<string>('');
-  const OnUrlChange:FormEventHandler<HTMLInputElement> = (e) => setUrl(e.currentTarget.value);
+  const blogFormRef = useRef<ToggleHandle>(null);
 
   useEffect(() => {
     const populateBlogsAsync = async () =>{
@@ -86,77 +76,66 @@ const App = () => {
     setToasts(filteredToasts);
   }
 
-  const OnLoginFormSubmit:FormEventHandler<HTMLFormElement> = async (e) =>{
-    e.preventDefault();
+  const OnLoginUser = async (username:string,password:string) => {
+
     try{
       const user:User = await authService.login({
         username,
         password
       });
-
       setUser(user);
       blogService.setToken(user.token);
       window.localStorage.setItem('user',JSON.stringify(user));
-
-      setUsername('');
-      setPassword('');
       addToast('Log in account','Successfully logged in','success',5000);
+      return true;
     }catch(ex){
       addToast('Log in account','Invalid username or password','error',5000);
     }
-  }
 
+    return false;
+  }
+  
   const OnLogoutClick = () => {
     window.localStorage.removeItem('user');
     setUser(null);
   }
 
-  const OnBlogFormSubmit:FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
-    const request:BlogCreateRequest = {
-      title,
-      author,
-      url
-    };
+  const OnCreateNewBlog = async (obj:BlogCreateRequest):Promise<boolean> =>{
     try{
-      const response:Blog = await blogService.create(request); 
+      const response:Blog = await blogService.create(obj); 
       setBlogs(blogs.concat(response));
-      setTitle('');
-      setAuthor('');
-      setUrl('');
+      blogFormRef.current?.toggleVisibility();
       addToast('Create new blog','New blog has been created successfully','success',5000);
+      return true;
     }catch(ex:any){
       addToast('Create new blog',ex.response.data.error,'error',5000);
     }
+    return false;
   }
 
   return(
     <div className='min-h-screen bg-gray-50 py-8'>
       <div className='max-w-5xl mx-auto flex flex-col gap-y-4'>
-        <LoginForm user={user} 
-          username={username} 
-          password={password} 
-          onUsernameChange={OnUsernameChange} 
-          onPasswordChange={OnPasswordChange} 
-          onFormSubmit={OnLoginFormSubmit}
-        />
+        {
+          !user &&
+          (<ToggleContainer btnLabel='Log in' btnPosition='text-end' btnCancelPosition='text-center'>
+            <LoginForm OnLoginUser={OnLoginUser}/>
+          </ToggleContainer>)
+        }
         <UserItem user={user} onLogoutClick={OnLogoutClick}/>
         <div className='border-b border-gray-200 py-2'>
           <h1 className='text-3xl'>Blogs</h1>
         </div>
-        <div className='grid grid-cols-2 gap-2'>
+        <div className='flex flex-col gap-2'>
           {blogs.map((blog:Blog) => <BlogItem key={blog.id} data={blog}/>)}
         </div>
         <ToastList data={toasts} OnToastClose={OnToastClose}/>
-        <BlogForm user={user} 
-          title={title} 
-          author={author} 
-          url={url} 
-          onTitleChange={OnTitleChange} 
-          onAuthorChange={OnAuthorChange} 
-          onUrlChange={OnUrlChange} 
-          onFormSubmit={OnBlogFormSubmit}
-        />
+        {
+          user && 
+          (<ToggleContainer btnLabel='New blog' btnPosition='text-end' btnCancelPosition='text-center' ref={blogFormRef}>
+            <BlogForm onCreateNewBlog={OnCreateNewBlog}/>
+        </ToggleContainer>)
+        }
       </div>
     </div>
   )
