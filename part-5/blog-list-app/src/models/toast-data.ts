@@ -3,7 +3,7 @@ export interface ToastData {
   title: string;
   text: string;
   type: 'success' | 'error';
-  timer: NodeJS.Timeout
+  timer: NodeJS.Timeout;
 }
 
 export default ToastData;
