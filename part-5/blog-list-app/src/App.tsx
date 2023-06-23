@@ -150,7 +150,13 @@ const App = () => {
         </div>
         <div className="flex flex-col gap-2">
           {sortedArray.map((blog: Blog) => (
-            <BlogItem key={blog.id} data={blog} onUpdate={OnUpdateBlog} user={user} onRemove={OnRemoveBlog} />
+            <BlogItem
+              key={blog.id}
+              data={blog}
+              onUpdate={OnUpdateBlog}
+              isAuthorized={user !== null}
+              onRemove={OnRemoveBlog}
+            />
           ))}
         </div>
         <ToastList data={toasts} OnToastClose={OnToastClose} />

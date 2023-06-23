@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 export interface Credentials {
   username: string;
@@ -14,10 +14,10 @@ export interface User {
 const baseUrl = '/api/auth';
 
 const login = async (credentials: Credentials): Promise<User> => {
-  const response = await axios.post(baseUrl + '/login', credentials);
+  const response = await axios.post(`${baseUrl}/login`, credentials);
   return response.data as User;
-}
+};
 
 export default {
-  login
-}
+  login,
+};

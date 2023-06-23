@@ -36,6 +36,7 @@ const BlogForm: FC<BlogFormProps> = ({ onCreateNewBlog }) => {
         <div>
           <label className="mb-1 text-gray-600 block">Title</label>
           <input
+            data-testid="input-title"
             value={title}
             onChange={OnTitleChange}
             className="block w-full px-2.5 py-1.5 text-gray-600 bg-gray-50 rounded-sm outline-none border border-gray-300 focus:border-blue-400 focus:ring-4 transition-all placeholder:text-gray-400 focus:ring-blue-200"
@@ -45,6 +46,7 @@ const BlogForm: FC<BlogFormProps> = ({ onCreateNewBlog }) => {
         <div>
           <label className="mb-1 text-gray-600 block">Author</label>
           <input
+            data-testid="input-author"
             value={author}
             onChange={OnAuthorChange}
             className="block w-full px-2.5 py-1.5 text-gray-600 bg-gray-50 rounded-sm outline-none border border-gray-300 focus:border-blue-400 focus:ring-4 transition-all placeholder:text-gray-400 focus:ring-blue-200"
@@ -54,6 +56,7 @@ const BlogForm: FC<BlogFormProps> = ({ onCreateNewBlog }) => {
         <div className="col-span-2">
           <label className="mb-1 text-gray-600 block">Url</label>
           <input
+            data-testid="input-url"
             value={url}
             onChange={OnUrlChange}
             className="block w-full px-2.5 py-1.5 text-gray-600 bg-gray-50 rounded-sm outline-none border border-gray-300 focus:border-blue-400 focus:ring-4 transition-all placeholder:text-gray-400 focus:ring-blue-200"
