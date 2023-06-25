@@ -31,36 +31,31 @@ Cypress.Commands.add('login', ({ username, password }) => {
   cy.request('POST', `${Cypress.env('backend')}/api/auth/login`, {
     username,
     password,
-  }).then(_ => {
-    localStorage.setItem('user', JSON.stringify(_.body));
+  }).then(response => {
+    localStorage.setItem('user', JSON.stringify(response.body));
     cy.visit('');
   });
 });
 
-Cypress.Commands.add('createBlog', ({ title, author, url, likes }) => {
+Cypress.Commands.add('createNote', ({ content, important }) => {
   const json = localStorage.getItem('user') ?? '';
   const user = JSON.parse(json);
 
   cy.request({
-    url: `${Cypress.env('backend')}/api/blogs`,
+    url: '/api/notes',
     method: 'POST',
-    body: {
-      title,
-      author,
-      url,
-      likes,
-    },
+    body: { content, important },
     headers: {
       Authorization: `Bearer ${user.token}`,
     },
-  }).then(_ => {
-    cy.visit('');
   });
+
+  cy.visit('');
 });
 
 declare namespace Cypress {
   interface Chainable {
     login({ username, password }: { username: string; password: string }): void;
-    createBlog({ title, author, url, likes }: { title: string; author: string; url: string; likes: number }): void;
+    createNote({ content, important }: { content: string; important: boolean }): void;
   }
 }

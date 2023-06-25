@@ -46,7 +46,10 @@ const App = () => {
     if (json) {
       const userObject: AuthorizedUser = JSON.parse(json);
       setUser(userObject);
-      blogService.setToken(userObject.token);
+      console.log(userObject);
+      if (userObject) {
+        blogService.setToken(userObject.token);
+      }
     }
   }, []);
 
@@ -154,7 +157,7 @@ const App = () => {
               key={blog.id}
               data={blog}
               onUpdate={OnUpdateBlog}
-              isAuthorized={user !== null}
+              isAuthorized={(user === null ? '' : user.username) === blog.user.username}
               onRemove={OnRemoveBlog}
             />
           ))}

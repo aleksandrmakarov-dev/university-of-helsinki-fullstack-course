@@ -30,7 +30,7 @@ const BlogItem: FC<BlogItemProps> = ({ data, onUpdate, isAuthorized, onRemove })
   };
 
   return (
-    <div className="border border-gray-200 bg-white p-4 rounded-sm shadow-sm">
+    <div data-testid="blog-item" className="border border-gray-200 bg-white p-4 rounded-sm shadow-sm">
       <div>
         <button
           onClick={toggleVisibility}
@@ -55,6 +55,7 @@ const BlogItem: FC<BlogItemProps> = ({ data, onUpdate, isAuthorized, onRemove })
           <div className="flex gap-x-2 items-center text-gray-600">
             <button
               role="like-btn"
+              data-testid="like-btn"
               className="like-btn p-2 rounded-full bg-gray-200 text-gray-600 transition-all hover:bg-pink-200 hover:text-pink-600 focus:ring-4 focus:ring-pink-100 focus:text-pink-600 focus:bg-pink-200"
               onClick={onLikeBlog}
             >
@@ -65,7 +66,11 @@ const BlogItem: FC<BlogItemProps> = ({ data, onUpdate, isAuthorized, onRemove })
             <p>{data.likes}</p>
           </div>
           {isAuthorized === true && (
-            <button className="text-gray-600 transition-colors p-2 hover:text-red-500" onClick={onRemoveBlog}>
+            <button
+              data-testid="delete-btn"
+              className="text-gray-600 transition-colors p-2 hover:text-red-500"
+              onClick={onRemoveBlog}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="currentColor" viewBox="0 0 448 512">
                 <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z" />
               </svg>
