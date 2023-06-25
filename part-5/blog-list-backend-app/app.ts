@@ -39,6 +39,12 @@ app.use('/api/users', usersRouter);
 // Auth routes
 app.use('/api/auth', authRouter);
 
+if (process.env.NODE_ENV === 'test') {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+  const testingRouter = require('./controllers/testing');
+  app.use('/api/testing', testingRouter);
+}
+
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 

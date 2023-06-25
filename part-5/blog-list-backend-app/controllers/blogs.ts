@@ -1,6 +1,5 @@
 import express, { Request, Response, Router } from 'express';
 import { Model } from 'mongoose';
-import * as bcrypt from 'bcrypt';
 import { Blog } from '../models/blog';
 import { User } from '../models/user';
 import { TokenAuthorizeRequest } from '../utils/middleware';
@@ -27,42 +26,6 @@ const router: Router = express.Router();
 // MongoDb model to manipulate blogs
 const BlogModel: Model<Blog> = require('../models/blog');
 const UserModel: Model<User> = require('../models/user');
-
-// const helper = require('../tests/test-helper');
-
-// router.get('/init', async (_req: Request, res: Response) => {
-//   const saltLength = 10;
-//   await BlogModel.deleteMany();
-//   await UserModel.deleteMany();
-
-//   const userPromises: Promise<User>[] = helper.initialUsers.map(async (user: any) => {
-//     const newUser: User = new UserModel({ ...user, passwordHash: await bcrypt.hash(user.password, saltLength) });
-//     return UserModel.create(newUser);
-//   });
-
-//   const users: User[] = await Promise.all(userPromises);
-
-//   const user: User | undefined = users.find((u: User) => u.username === helper.initialUsers[0].username);
-
-//   if (!user) {
-//     throw new Error('root user is undefined');
-//   }
-
-//   // Map blog so it has root user as owner and it as promise
-//   const promises: Promise<Blog>[] = helper.initialBlogs.map((blog: any) => {
-//     const newBlog: Blog = new BlogModel({ ...blog, user: user.id });
-//     return BlogModel.create(newBlog);
-//   });
-
-//   // Wait all promises
-//   const createdBlogs: Blog[] = await Promise.all(promises);
-//   // Push blogs ids to user
-//   user.blogs.push(...createdBlogs.map((blog: Blog) => blog.id));
-//   // Update user
-//   await user.save();
-
-//   return res.json({ message: 'initialized' });
-// });
 
 // GET all blogs
 router.get('/', async (req: Request, res: Response) => {

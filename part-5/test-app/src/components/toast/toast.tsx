@@ -23,7 +23,10 @@ const Toast: FC<ToastProps> = ({ data, handleToastClose }) => {
       </div>
     );
   return (
-    <div className="bg-white border border-gray-200 rounded-sm shadow-sm p-4 flex items-start gap-x-2 pointer-events-auto max-w-2xl">
+    <div
+      data-testid="toast"
+      className="bg-white border border-gray-200 rounded-sm shadow-sm p-4 flex items-start gap-x-2 pointer-events-auto max-w-2xl"
+    >
       {icon}
       <div>
         <p className="font-semibold">{data.title}</p>

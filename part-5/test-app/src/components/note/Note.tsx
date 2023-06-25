@@ -34,7 +34,7 @@ const Note: FC<NoteProps> = ({ note, OnToggleImportance }) => {
   return (
     <>
       <li className="p-4 border border-gray-200 shadow-sm rounded-sm bg-white flex justify-between items-center">
-        {note.content}
+        <span>{note.content}</span>
         {button}
       </li>
     </>

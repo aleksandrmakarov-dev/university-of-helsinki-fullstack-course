@@ -16,9 +16,12 @@ const NoteForm: FC<NoteFormProps> = ({ isAuthorized, createNewNote }) => {
     const noteObject: INote = {
       id: '',
       content: note,
-      important: Math.random() < 0.5,
+      important: true,
     };
-    await createNewNote(noteObject);
+    const result = await createNewNote(noteObject);
+    if (result === true) {
+      setNote('');
+    }
   };
 
   if (!isAuthorized) return null;
@@ -27,6 +30,7 @@ const NoteForm: FC<NoteFormProps> = ({ isAuthorized, createNewNote }) => {
     <div className="bg-white rounded-sm p-4 shadow-sm border border-gray-200">
       <form className="flex gap-x-2" onSubmit={onFormSubmit}>
         <input
+          data-testid="input-note"
           className="flex-1 px-2.5 py-1.5 text-gray-600 bg-gray-50 rounded-sm outline-none border border-gray-300 focus:border-blue-400 focus:ring-4 transition-all placeholder:text-gray-400 focus:ring-blue-200"
           value={note}
           placeholder="e.g. Tailwind is neat"

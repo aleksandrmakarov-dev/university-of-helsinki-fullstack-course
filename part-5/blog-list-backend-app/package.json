@@ -9,7 +9,8 @@
     "dev": "cross-env NODE_ENV=development ts-node-dev index.ts",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand --detectOpenHandles",
     "lint": "eslint --ignore-path .eslintignore --ext .js,.ts .",
-    "build:ui": "@powershell Remove-Item -Recurse -Force build && cd ../test-app && npm run build && @powershell Copy-Item build -Recurse -Force ../test-backend"
+    "build:ui": "@powershell Remove-Item -Recurse -Force build && cd ../test-app && npm run build && @powershell Copy-Item build -Recurse -Force ../test-backend",
+    "start:test": "cross-env NODE_ENV=test ts-node-dev index.ts"
   },
   "author": "",
   "license": "ISC",

@@ -27,6 +27,7 @@ const LoginForm: FC<LoginFormProps> = ({ OnLoginUser }) => {
         <div className="mb-2">
           <label className="mb-1 text-gray-600 block">Username</label>
           <input
+            data-testid="username"
             value={username}
             onChange={OnUsernameChange}
             className="block w-full px-2.5 py-1.5 text-gray-600 bg-gray-50 rounded-sm outline-none border border-gray-300 focus:border-blue-400 focus:ring-4 transition-all placeholder:text-gray-400 focus:ring-blue-200"
@@ -36,6 +37,7 @@ const LoginForm: FC<LoginFormProps> = ({ OnLoginUser }) => {
         <div className="mb-4">
           <label className="mb-1 text-gray-600 block">Password</label>
           <input
+            data-testid="password"
             value={password}
             onChange={OnPasswordChange}
             type="password"
@@ -45,6 +47,7 @@ const LoginForm: FC<LoginFormProps> = ({ OnLoginUser }) => {
         </div>
         <div className="flex justify-between">
           <button
+            data-testid="login-btn"
             type="submit"
             className="rounded-sm text-sm font-semibold transition-colors px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white focus:ring-4 focus:ring-blue-200"
           >

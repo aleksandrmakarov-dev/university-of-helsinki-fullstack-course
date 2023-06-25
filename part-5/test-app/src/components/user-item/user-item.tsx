@@ -12,9 +12,7 @@ const UserItem: FC<UserItemProps> = ({ user, onLogoutClick }) => {
 
   return (
     <div className="bg-white border-gray-200 border rounded-full shadow-sm py-2 px-4 self-start flex gap-x-4 items-center">
-      <p>
-        Hello, <span className="font-semibold">{user?.name}</span>
-      </p>
+      <p>Hello, {user?.name}</p>
       <button
         type="button"
         className="rounded-full p-2 text-gray-600 bg-gray-100 hover:bg-gray-200"

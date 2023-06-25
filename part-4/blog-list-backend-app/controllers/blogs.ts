@@ -1,4 +1,4 @@
-import express, { Request, Response, Router, application, json } from 'express';
+import express, { Request, Response, Router } from 'express';
 import { Model } from 'mongoose';
 import { Blog } from '../models/blog';
 import { User } from '../models/user';

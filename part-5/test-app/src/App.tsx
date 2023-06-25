@@ -7,6 +7,7 @@ import LoginForm from './components/login-form/login-form';
 import NoteForm from './components/note-form/note-form';
 import UserItem from './components/user-item/user-item';
 import ToastList from './components/toast-list/toast-list';
+import ToggleContainer, { ToggleHandle } from './components/toggle-container/toggle-container';
 
 export interface INote {
   id: string;
@@ -27,6 +28,9 @@ const App: FC = () => {
   const [showAll, setShowAll] = useState<boolean>(true);
   const [toasts, setToasts] = useState<ToastData[]>([]);
   const toastsRef = useRef<ToastData[]>([]);
+
+  const noteFormRef = useRef<ToggleHandle>(null);
+  const loginFormRef = useRef<ToggleHandle>(null);
 
   // login
   const [username, setUsername] = useState<string>('');
@@ -77,6 +81,7 @@ const App: FC = () => {
       const response: INote = await noteService.create(noteObject);
       setNotes(notes.concat(response));
       addToast('Create new note', 'New note has been created successfully', 'success', 5000);
+      noteFormRef?.current?.toggleVisibility();
       return true;
     } catch (ex: any) {
       const data = ex.response.data;
@@ -122,6 +127,7 @@ const App: FC = () => {
 
       setUsername('');
       setPassword('');
+      loginFormRef?.current?.toggleVisibility();
       addToast('Log in account', 'Successfully logged in', 'success', 5000);
     } catch (ex) {
       addToast('Log in account', 'Invalid username or password', 'error', 5000);
@@ -162,14 +168,21 @@ const App: FC = () => {
   return (
     <div className="bg-gray-50 min-h-screen py-8">
       <div className="max-w-5xl mx-auto flex flex-col gap-4">
-        <LoginForm
-          user={user}
-          username={username}
-          password={password}
-          onUsernameChange={OnUsernameChange}
-          onPasswordChange={OnPasswordChange}
-          onFormSubmit={OnLoginFormSubmit}
-        />
+        <ToggleContainer
+          btnLabel={'Log in'}
+          btnPosition={'flex justify-end'}
+          btnCancelPosition={'flex justify-center'}
+          ref={loginFormRef}
+        >
+          <LoginForm
+            user={user}
+            username={username}
+            password={password}
+            onUsernameChange={OnUsernameChange}
+            onPasswordChange={OnPasswordChange}
+            onFormSubmit={OnLoginFormSubmit}
+          />
+        </ToggleContainer>
         <UserItem user={user} onLogoutClick={OnLogoutClick} />
 
         <div className="border-b pb-2 border-gray-200 flex justify-between items-center">
@@ -187,8 +200,14 @@ const App: FC = () => {
             </label>
           </div>
         </div>
-
-        <NoteForm isAuthorized={user !== null} createNewNote={createNewNote} />
+        <ToggleContainer
+          btnLabel="New note"
+          btnPosition="flex justify-end"
+          btnCancelPosition="flex justify-center"
+          ref={noteFormRef}
+        >
+          <NoteForm isAuthorized={user !== null} createNewNote={createNewNote} />
+        </ToggleContainer>
 
         <ul className="flex flex-col gap-y-2">
           {notesToShow.map((note: INote) => (
