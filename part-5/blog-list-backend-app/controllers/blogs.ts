@@ -59,6 +59,8 @@ router.post('/', async (req: TokenAuthorizeRequest, res: Response) => {
   user.blogs.push(createdBlog);
   await user.save();
 
+  await createdBlog.populate('user', { blogs: 0 });
+
   return res.status(201).json(createdBlog);
 });
 

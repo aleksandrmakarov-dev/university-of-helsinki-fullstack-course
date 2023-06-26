@@ -77,6 +77,7 @@ const BlogItem: FC<BlogItemProps> = ({ data, onUpdate, isAuthorized, onRemove })
             </button>
           )}
         </div>
+        <p className="text-end text-sm text-gray-600">Posted by {data.user.name}</p>
       </div>
     </div>
   );
