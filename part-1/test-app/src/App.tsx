@@ -1,70 +1,58 @@
-import React, { useState } from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import { click } from '@testing-library/user-event/dist/click';
+import axios from 'axios';
 
-const History = (props:any) =>{
-  if(props.allClicks.length === 0){
-    return(
-      <div>
-        the app is used by pressing the buttons
-      </div>
-    )
-  }else{
-    return(
-      <div>
-        button press history: {props.allClicks.join(' ')}
-      </div>
-    )
-  }
-}
+const App = () => {
 
-const Display = ({clicks}:{clicks:{left:number,right:number}}) =>{
-  return(
-    <div>Left: {clicks.left}, Right: {clicks.right}</div>
-  );
-}
+  const [countries,setCountries] = useState<any>([]);
+  const [filteredCountries, setFilteredCountries] = useState<any>([]);
+  const [filter,setFilter] = useState<string>('');
 
-const Button = ({text,handleClick}:{text:string,handleClick:()=>void}) =>{
-  return(
-    <button onClick={handleClick}>{text}</button>
-  );
-}
+  useEffect(() => {
+    axios
+      .get("https://studies.cs.helsinki.fi/restcountries/api/all")
+      .then(response =>{
+        setCountries(response.data);
+        setFilteredCountries(response.data);
+        return response
+      })
+      .then(response =>{
+        console.log('then:',countries);
+      }
+      )
+  },[])
 
-function App() {
+  useEffect(() =>{
+    if(filter.length === 0){
+      setFilteredCountries(countries);
+    }else{
+      const filtered = countries.filter((c:any)=>c.name.common.toLowerCase().includes(filter.toLowerCase()));
+      setFilteredCountries(filtered);
+    }
+  },[filter])
 
-  const [clicks,setClicks] = useState({
-    left:0, right:0
-  })
+  useEffect(() =>{
+    console.log(countries);
+  },[countries])
 
-  let array:string[] = [];
 
-  const [allClicks,setAllClicks] = useState(array);
-  const [total, setTotal] = useState(0);
-
-  const leftClick = () => {
-    const updatedLeft = clicks.left + 1;
-    setClicks({...clicks,left:updatedLeft});
-    setAllClicks(allClicks.concat('L'));
-    setTotal(updatedLeft+clicks.right);
-  }
-
-  const rightClick = () =>{
-    const updatedRight = clicks.right + 1;
-    setClicks({...clicks, right:updatedRight});
-    setAllClicks(allClicks.concat('R'));
-    setTotal(clicks.left+updatedRight);
-  }
-
-  return(
+  return (
     <div>
-      <Display clicks={clicks}/>
-      <Button text='left' handleClick={leftClick}/>
-      <Button text='right' handleClick={rightClick}/>
-      <History allClicks={allClicks}/>
-      <p>Total: {total}</p>
+      <div>
+        <label>filter: </label>
+        <input value={filter} onChange={(e:any) => setFilter(e.target.value)}/>
+      </div>
+      <ul>
+        {
+          filteredCountries.map((c:any) =>
+          <li key={c.cca2}>
+            {c.name.common}
+          </li>)
+        }
+      </ul>
     </div>
-  );
+  )
 }
 
 export default App;
