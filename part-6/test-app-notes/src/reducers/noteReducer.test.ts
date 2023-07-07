@@ -1,10 +1,10 @@
 import deepFreeze from 'deep-freeze';
 import { Reducer } from 'redux';
-import noteReducer, { Note, NoteAction } from './noteReducer';
+import noteReducer, { NoteData, NoteAction } from './noteReducer';
 
 describe('noteReducer', () => {
   test('returns new state with action NEW_NOTE', () => {
-    const state: Note[] = [];
+    const state: NoteData[] = [];
     const action: NoteAction = {
       type: 'NEW_NOTE',
       payload: {
@@ -16,7 +16,7 @@ describe('noteReducer', () => {
 
     deepFreeze(state);
 
-    const newState: Note[] = noteReducer(state, action);
+    const newState: NoteData[] = noteReducer(state, action);
 
     expect(newState).toHaveLength(1);
     expect(newState).toContainEqual(action.payload);
@@ -44,7 +44,7 @@ describe('noteReducer', () => {
     };
 
     deepFreeze(state);
-    const newState: Note[] = noteReducer(state, action);
+    const newState: NoteData[] = noteReducer(state, action);
     expect(newState).toHaveLength(2);
     expect(newState).toContainEqual(state[0]);
     expect(newState).toContainEqual({

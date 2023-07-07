@@ -1,6 +1,6 @@
 import { Reducer } from 'redux';
 
-export interface Note {
+export interface NoteData {
   id: number;
   content?: string;
   important?: boolean;
@@ -8,29 +8,49 @@ export interface Note {
 
 export interface NoteAction {
   type: string;
-  payload: Note;
+  payload: NoteData;
 }
 
-const noteReducer: Reducer<Note[], NoteAction> = (state = [], action) => {
+const generateId = () => Number((Math.random() * 1000000).toFixed(0));
+
+export const createNote = (content: string) => {
+  return {
+    type: 'NEW_NoteData',
+    payload: {
+      content,
+      important: false,
+      id: generateId(),
+    },
+  };
+};
+
+export const toggleImportanceOf = (id: number) => {
+  return {
+    type: 'TOGGLE_IMPORTANCE',
+    payload: { id },
+  };
+};
+
+const NoteDataReducer: Reducer<NoteData[], NoteAction> = (state = [], action) => {
   switch (action.type) {
-    case 'NEW_NOTE':
+    case 'NEW_NoteData':
       return state.concat(action.payload);
     case 'TOGGLE_IMPORTANCE': {
       const id = action.payload.id;
-      const noteToChange: Note | undefined = state.find((note: Note) => note.id === id);
+      const NoteDataToChange: NoteData | undefined = state.find((note: NoteData) => note.id === id);
 
-      if (!noteToChange) return state;
+      if (!NoteDataToChange) return state;
 
-      const changedNote: Note = {
-        ...noteToChange,
-        important: !noteToChange.important,
+      const changedNoteData: NoteData = {
+        ...NoteDataToChange,
+        important: !NoteDataToChange.important,
       };
 
-      return state.map((note: Note) => (note.id !== id ? note : changedNote));
+      return state.map((note: NoteData) => (note.id !== id ? note : changedNoteData));
     }
     default:
       return state;
   }
 };
 
-export default noteReducer;
+export default NoteDataReducer;
