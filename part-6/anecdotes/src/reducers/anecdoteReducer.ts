@@ -6,7 +6,7 @@ export interface AnecdoteData {
   votes: number;
 }
 
-export interface AnecdoteAction {
+export interface ReducerAction {
   type: string;
   payload: any;
 }
@@ -30,14 +30,14 @@ const toAndecdoteData = (content: string): AnecdoteData => {
   };
 };
 
-export const addAnecdoteAction = (content: string): AnecdoteAction => {
+export const addAnecdoteAction = (content: string): ReducerAction => {
   return {
     type: 'ADD',
     payload: toAndecdoteData(content),
   };
 };
 
-export const voteForAnecdoteAction = (id: string): AnecdoteAction => {
+export const voteForAnecdoteAction = (id: string): ReducerAction => {
   return {
     type: 'VOTE',
     payload: id,
@@ -46,7 +46,7 @@ export const voteForAnecdoteAction = (id: string): AnecdoteAction => {
 
 const initialState = initialAnecdotes.map(toAndecdoteData);
 
-const AnecdoteDataReducer: Reducer<AnecdoteData[], AnecdoteAction> = (state = initialState, action) => {
+const anecdoteReducer: Reducer<AnecdoteData[], ReducerAction> = (state = initialState, action) => {
   switch (action.type) {
     case 'VOTE':
       return state.map((anecdote: AnecdoteData) =>
@@ -59,4 +59,4 @@ const AnecdoteDataReducer: Reducer<AnecdoteData[], AnecdoteAction> = (state = in
   }
 };
 
-export default AnecdoteDataReducer;
+export default anecdoteReducer;

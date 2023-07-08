@@ -1,11 +1,11 @@
 import deepFreeze from 'deep-freeze';
 import { Reducer } from 'redux';
-import noteReducer, { NoteData, NoteAction } from './noteReducer';
+import noteReducer, { NoteData, ReducerAction } from './noteReducer';
 
 describe('noteReducer', () => {
   test('returns new state with action NEW_NOTE', () => {
     const state: NoteData[] = [];
-    const action: NoteAction = {
+    const action: ReducerAction = {
       type: 'NEW_NOTE',
       payload: {
         content: 'the app state is in redux store',
@@ -36,7 +36,7 @@ describe('noteReducer', () => {
       },
     ];
 
-    const action: NoteAction = {
+    const action: ReducerAction = {
       type: 'TOGGLE_IMPORTANCE',
       payload: {
         id: 2,

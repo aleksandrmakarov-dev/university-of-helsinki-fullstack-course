@@ -2,13 +2,13 @@ import { Reducer } from 'redux';
 
 export interface NoteData {
   id: number;
-  content?: string;
-  important?: boolean;
+  content: string;
+  important: boolean;
 }
 
-export interface NoteAction {
+export interface ReducerAction {
   type: string;
-  payload: NoteData;
+  payload: any;
 }
 
 const generateId = () => Number((Math.random() * 1000000).toFixed(0));
@@ -31,7 +31,20 @@ export const toggleImportanceOf = (id: number) => {
   };
 };
 
-const NoteDataReducer: Reducer<NoteData[], NoteAction> = (state = [], action) => {
+const initialState = [
+  {
+    content: 'reducer defines how redux store works',
+    important: true,
+    id: 1,
+  },
+  {
+    content: 'state of store can contain any data',
+    important: false,
+    id: 2,
+  },
+];
+
+const NoteDataReducer: Reducer<NoteData[], ReducerAction> = (state = initialState, action) => {
   switch (action.type) {
     case 'NEW_NoteData':
       return state.concat(action.payload);
