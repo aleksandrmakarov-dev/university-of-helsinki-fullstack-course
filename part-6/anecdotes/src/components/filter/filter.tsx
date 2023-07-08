@@ -1,12 +1,12 @@
 import { FormEventHandler } from 'react';
 import { useDispatch } from 'react-redux';
-import { changeFilter } from '../../reducers/filterReducer';
+import { filterChange } from '../../reducers/filterReducer';
 
 const Filter = () => {
   const dispatch = useDispatch();
 
   const handleChange: FormEventHandler<HTMLInputElement> = e => {
-    dispatch(changeFilter(e.currentTarget.value));
+    dispatch(filterChange(e.currentTarget.value));
   };
   return (
     <div>

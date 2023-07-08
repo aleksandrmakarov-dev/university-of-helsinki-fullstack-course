@@ -1,6 +1,6 @@
 import { FormEventHandler, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addAnecdoteAction } from '../../reducers/anecdoteReducer';
+import { addAnecdote } from '../../reducers/anecdoteReducer';
 
 const AnecdoteForm = () => {
   const [content, setContent] = useState<string>('');
@@ -10,7 +10,7 @@ const AnecdoteForm = () => {
   const onSubmit: FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault();
     if (content.length > 0) {
-      dispatch(addAnecdoteAction(content));
+      dispatch(addAnecdote(content));
       setContent('');
     }
   };

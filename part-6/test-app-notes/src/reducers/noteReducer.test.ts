@@ -1,25 +1,23 @@
 import deepFreeze from 'deep-freeze';
-import { Reducer } from 'redux';
-import noteReducer, { NoteData, ReducerAction } from './noteReducer';
+import { PayloadAction } from '@reduxjs/toolkit';
+import noteReducer, { NoteData } from './noteReducer';
 
 describe('noteReducer', () => {
   test('returns new state with action NEW_NOTE', () => {
     const state: NoteData[] = [];
-    const action: ReducerAction = {
-      type: 'NEW_NOTE',
-      payload: {
-        content: 'the app state is in redux store',
-        important: true,
-        id: 1,
-      },
+    const action: PayloadAction<string> = {
+      type: 'notes/createNote',
+      payload: 'the app state is in redux store',
     };
 
     deepFreeze(state);
 
     const newState: NoteData[] = noteReducer(state, action);
 
+    console.log(newState);
+
     expect(newState).toHaveLength(1);
-    expect(newState).toContainEqual(action.payload);
+    expect(newState.map(s => s.content)).toContainEqual(action.payload);
   });
 
   test('return new state with action TOGGLE_IMPORTANCE', () => {
@@ -36,13 +34,10 @@ describe('noteReducer', () => {
       },
     ];
 
-    const action: ReducerAction = {
-      type: 'TOGGLE_IMPORTANCE',
-      payload: {
-        id: 2,
-      },
+    const action: PayloadAction<number> = {
+      type: 'notes/toggleImportanceOf',
+      payload: 2,
     };
-
     deepFreeze(state);
     const newState: NoteData[] = noteReducer(state, action);
     expect(newState).toHaveLength(2);

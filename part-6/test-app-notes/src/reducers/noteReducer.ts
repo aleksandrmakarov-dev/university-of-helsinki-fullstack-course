@@ -1,4 +1,5 @@
-import { Reducer } from 'redux';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { AnyAction, Reducer } from 'redux';
 
 export interface NoteData {
   id: number;
@@ -6,30 +7,7 @@ export interface NoteData {
   important: boolean;
 }
 
-export interface ReducerAction {
-  type: string;
-  payload: any;
-}
-
 const generateId = () => Number((Math.random() * 1000000).toFixed(0));
-
-export const createNote = (content: string) => {
-  return {
-    type: 'NEW_NoteData',
-    payload: {
-      content,
-      important: false,
-      id: generateId(),
-    },
-  };
-};
-
-export const toggleImportanceOf = (id: number) => {
-  return {
-    type: 'TOGGLE_IMPORTANCE',
-    payload: { id },
-  };
-};
 
 const initialState = [
   {
@@ -44,26 +22,35 @@ const initialState = [
   },
 ];
 
-const NoteDataReducer: Reducer<NoteData[], ReducerAction> = (state = initialState, action) => {
-  switch (action.type) {
-    case 'NEW_NoteData':
-      return state.concat(action.payload);
-    case 'TOGGLE_IMPORTANCE': {
-      const id = action.payload.id;
-      const NoteDataToChange: NoteData | undefined = state.find((note: NoteData) => note.id === id);
-
-      if (!NoteDataToChange) return state;
-
-      const changedNoteData: NoteData = {
-        ...NoteDataToChange,
-        important: !NoteDataToChange.important,
+const noteSlice = createSlice({
+  name: 'notes',
+  initialState,
+  reducers: {
+    createNote(state, action: PayloadAction<string>) {
+      const content = action.payload;
+      const newNoteData: NoteData = {
+        content,
+        important: false,
+        id: generateId(),
       };
+      state.push(newNoteData);
+    },
 
-      return state.map((note: NoteData) => (note.id !== id ? note : changedNoteData));
-    }
-    default:
-      return state;
-  }
-};
+    toggleImportanceOf(state, action: PayloadAction<number>) {
+      const id = action.payload;
+      const noteToChange = state.find(note => note.id === id);
+      if (!noteToChange) {
+        return state;
+      }
+      const changedNote = {
+        ...noteToChange,
+        important: !noteToChange?.important,
+      };
+      return state.map(note => (note.id !== id ? note : changedNote));
+    },
+  },
+});
 
-export default NoteDataReducer;
+export const { createNote, toggleImportanceOf } = noteSlice.actions;
+
+export default noteSlice.reducer;

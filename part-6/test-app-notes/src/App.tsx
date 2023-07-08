@@ -3,10 +3,6 @@ import Notes from './components/notes/notes';
 import VisibilityFilter from './components/visibility-filter/visibility-filter';
 
 const App = () => {
-  const onSelectFilter = (value: string) => {
-    console.log(value);
-  };
-
   return (
     <div className="p-4">
       <NoteForm />
