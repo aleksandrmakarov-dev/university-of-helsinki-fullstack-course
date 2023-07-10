@@ -3,9 +3,10 @@ import './index.css';
 import { combineReducers, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import noteReducer, { NoteData } from './reducers/noteReducer';
+import noteReducer, { NoteData, appendNote, setNotes } from './reducers/noteReducer';
 import App from './App';
 import filterReducer from './reducers/filterReducer';
+import notesService from './services/notes-service';
 
 export interface AppState {
   notes: NoteData[];

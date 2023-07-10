@@ -9,18 +9,7 @@ export interface NoteData {
 
 const generateId = () => Number((Math.random() * 1000000).toFixed(0));
 
-const initialState = [
-  {
-    content: 'reducer defines how redux store works',
-    important: true,
-    id: 1,
-  },
-  {
-    content: 'state of store can contain any data',
-    important: false,
-    id: 2,
-  },
-];
+const initialState: NoteData[] = [];
 
 const noteSlice = createSlice({
   name: 'notes',
@@ -48,9 +37,17 @@ const noteSlice = createSlice({
       };
       return state.map(note => (note.id !== id ? note : changedNote));
     },
+
+    appendNote(state, action: PayloadAction<NoteData>) {
+      state.push(action.payload);
+    },
+
+    setNotes(state, action: PayloadAction<NoteData[]>) {
+      return action.payload;
+    },
   },
 });
 
-export const { createNote, toggleImportanceOf } = noteSlice.actions;
+export const { createNote, toggleImportanceOf, appendNote, setNotes } = noteSlice.actions;
 
 export default noteSlice.reducer;

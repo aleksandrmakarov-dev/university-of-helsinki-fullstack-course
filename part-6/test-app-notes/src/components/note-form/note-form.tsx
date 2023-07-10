@@ -1,15 +1,17 @@
 import { FC, FormEventHandler } from 'react';
 import { useDispatch } from 'react-redux';
-import { createNote } from '../../reducers/noteReducer';
+import { NoteData, appendNote, createNote } from '../../reducers/noteReducer';
+import notesService from '../../services/notes-service';
 
 const NoteForm = () => {
   const dispatch = useDispatch();
 
-  const addNote: FormEventHandler<HTMLFormElement> = e => {
+  const addNote: FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault();
     const content = e.currentTarget.note.value;
     e.currentTarget.note.value = '';
-    dispatch(createNote(content));
+    const newNote: NoteData = await notesService.createNew(content);
+    dispatch(appendNote(newNote));
   };
 
   return (

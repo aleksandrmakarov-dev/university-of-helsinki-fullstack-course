@@ -1,17 +1,23 @@
 import { FormEventHandler, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addAnecdote } from '../../reducers/anecdoteReducer';
+import anecdoteService from '../../services/anecdote-service';
+import { appendAnecdote } from '../../reducers/anecdoteReducer';
 
 const AnecdoteForm = () => {
   const [content, setContent] = useState<string>('');
   const onContentChange: FormEventHandler<HTMLInputElement> = e => setContent(e.currentTarget.value);
 
   const dispatch = useDispatch();
-  const onSubmit: FormEventHandler<HTMLFormElement> = e => {
+  const onSubmit: FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault();
     if (content.length > 0) {
-      dispatch(addAnecdote(content));
-      setContent('');
+      try {
+        const response = await anecdoteService.createNew(content);
+        dispatch(appendAnecdote(response));
+        setContent('');
+      } catch (error: any) {
+        console.log(error);
+      }
     }
   };
 
