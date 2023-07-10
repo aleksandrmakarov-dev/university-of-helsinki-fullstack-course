@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { AnecdoteData, voteForAnecdote } from '../../reducers/anecdoteReducer';
 import { AppState } from '../../store';
-import { removeNotification, setNotification } from '../../reducers/notificationReducer';
 import { useAppDispatch } from '../../hooks';
+import { setNotification, setNotificationContent } from '../../reducers/notificationReducer';
 
 const AnecdoteList = () => {
   const anecdotesData: AnecdoteData[] = useSelector((state: AppState) => {
@@ -17,10 +17,7 @@ const AnecdoteList = () => {
 
   const onVote = (anecdote: AnecdoteData) => {
     dispatch(voteForAnecdote(anecdote.id));
-    dispatch(setNotification(`you voted '${anecdote.content}'`));
-    setTimeout(() => {
-      dispatch(removeNotification());
-    }, 5000);
+    dispatch(setNotification(`you voted '${anecdote.content}'`, 5));
   };
 
   const sortedArray = [...anecdotesData].sort((a: AnecdoteData, b: AnecdoteData) => b.votes - a.votes);
