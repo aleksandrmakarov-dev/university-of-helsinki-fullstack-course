@@ -1,13 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
-import anecdoteReducer, { AnecdoteData } from './reducers/anecdoteReducer';
+import anecdoteReducer from './reducers/anecdoteReducer';
 import filterReducer from './reducers/filterReducer';
 import notificationReducer from './reducers/notificationReducer';
-
-export interface AppState {
-  anecdotes: AnecdoteData[];
-  filter: string;
-  notification: string | null;
-}
 
 const store = configureStore({
   reducer: {
@@ -16,5 +10,8 @@ const store = configureStore({
     notification: notificationReducer,
   },
 });
+
+export type AppDispatch = typeof store.dispatch;
+export type AppState = ReturnType<typeof store.getState>;
 
 export default store;

@@ -1,12 +1,12 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { NoteData, toggleImportanceOf } from '../../reducers/noteReducer';
 import Note from '../note/note';
-import { AppState } from '../..';
 import notesService from '../../services/notes-service';
+import { AppState } from '../../store';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 
 const Notes = () => {
-  const dispatch = useDispatch();
-  const notes = useSelector((state: AppState) => {
+  const dispatch = useAppDispatch();
+  const notes = useAppSelector((state: AppState) => {
     if (state.filter === 'ALL') {
       return state.notes;
     }
@@ -18,7 +18,7 @@ const Notes = () => {
   const toggleImportance = (note: NoteData) => {
     notesService
       .update(note.id, { ...note, important: !note.important })
-      .then(response => {
+      .then(_response => {
         dispatch(toggleImportanceOf(note.id));
       })
       .catch(e => console.log(e));

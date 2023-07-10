@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { AnyAction, Reducer } from 'redux';
+import { AnyAction, Dispatch, Reducer } from 'redux';
+import notesService from '../services/notes-service';
 
 export interface NoteData {
   id: number;
@@ -7,7 +8,7 @@ export interface NoteData {
   important: boolean;
 }
 
-const generateId = () => Number((Math.random() * 1000000).toFixed(0));
+// const generateId = () => Number((Math.random() * 1000000).toFixed(0));
 
 const initialState: NoteData[] = [];
 
@@ -15,16 +16,6 @@ const noteSlice = createSlice({
   name: 'notes',
   initialState,
   reducers: {
-    createNote(state, action: PayloadAction<string>) {
-      const content = action.payload;
-      const newNoteData: NoteData = {
-        content,
-        important: false,
-        id: generateId(),
-      };
-      state.push(newNoteData);
-    },
-
     toggleImportanceOf(state, action: PayloadAction<number>) {
       const id = action.payload;
       const noteToChange = state.find(note => note.id === id);
@@ -48,6 +39,20 @@ const noteSlice = createSlice({
   },
 });
 
-export const { createNote, toggleImportanceOf, appendNote, setNotes } = noteSlice.actions;
+export const initializeNotes = () => {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    const notes = await notesService.getAll();
+    dispatch(setNotes(notes));
+  };
+};
+
+export const createNote = (content: string) => {
+  return async (dispatch: Dispatch<AnyAction>) => {
+    const newNote: NoteData = await notesService.createNew(content);
+    dispatch(appendNote(newNote));
+  };
+};
+
+export const { toggleImportanceOf, appendNote, setNotes } = noteSlice.actions;
 
 export default noteSlice.reducer;
