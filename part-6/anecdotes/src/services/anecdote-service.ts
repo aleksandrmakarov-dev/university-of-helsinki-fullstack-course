@@ -19,7 +19,19 @@ const createNew = async (content: string) => {
   return response.data;
 };
 
+const update = async (id: number, value: AnecdoteData) => {
+  const response = await axios.put(`${baseUrl}/${id}`, value);
+  return response.data;
+};
+
+const getById = async (id: number) => {
+  const response = await axios.get(`${baseUrl}/${id}`);
+  return response.data;
+};
+
 export default {
   getAll,
   createNew,
+  update,
+  getById,
 };

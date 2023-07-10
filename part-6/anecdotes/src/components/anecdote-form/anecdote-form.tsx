@@ -1,7 +1,5 @@
 import { FormEventHandler, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import anecdoteService from '../../services/anecdote-service';
-import { appendAnecdote, createAnecdote } from '../../reducers/anecdoteReducer';
+import { createAnecdote } from '../../reducers/anecdoteReducer';
 import { useAppDispatch } from '../../hooks';
 
 const AnecdoteForm = () => {

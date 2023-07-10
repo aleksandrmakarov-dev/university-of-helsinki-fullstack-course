@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { AnecdoteData, voteFor } from '../../reducers/anecdoteReducer';
+import { AnecdoteData, voteForAnecdote } from '../../reducers/anecdoteReducer';
 import { AppState } from '../../store';
 import { removeNotification, setNotification } from '../../reducers/notificationReducer';
+import { useAppDispatch } from '../../hooks';
 
 const AnecdoteList = () => {
   const anecdotesData: AnecdoteData[] = useSelector((state: AppState) => {
@@ -11,10 +12,11 @@ const AnecdoteList = () => {
 
     return state.anecdotes.filter((v: AnecdoteData) => v.content.toLowerCase().includes(state.filter.toLowerCase()));
   });
-  const dispatch = useDispatch();
+
+  const dispatch = useAppDispatch();
 
   const onVote = (anecdote: AnecdoteData) => {
-    dispatch(voteFor(anecdote.id));
+    dispatch(voteForAnecdote(anecdote.id));
     dispatch(setNotification(`you voted '${anecdote.content}'`));
     setTimeout(() => {
       dispatch(removeNotification());
