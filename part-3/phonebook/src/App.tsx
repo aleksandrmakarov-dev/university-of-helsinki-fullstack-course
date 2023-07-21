@@ -107,6 +107,7 @@ const App = () =>{
           setPhone('');
         })
         .catch((e:AxiosError)=>{
+          console.log(e);
           const errorData:IError = e.response?.data as IError;
           setNotification({text:errorData.error,isSucess:false});
         })
