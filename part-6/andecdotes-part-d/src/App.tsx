@@ -1,12 +1,12 @@
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import AnecdoteForm from './components/anecdote-form';
 import Notification from './components/notification';
-import { getAnecdotes } from './requests';
+import { getAnecdotes, updateAnecdote } from './requests';
 
 export interface AnecdoteData {
   id?: string;
   content: string;
-  votes: 0;
+  votes: number;
 }
 
 const App = () => {
@@ -15,8 +15,22 @@ const App = () => {
     retry: false,
   });
 
+  const queryClient = useQueryClient();
+
+  const voteMutation = useMutation(updateAnecdote, {
+    onSuccess: (updatedAnecdote: AnecdoteData) => {
+      const anecdotes: AnecdoteData[] = queryClient.getQueryData('anecdotes') ?? [];
+      queryClient.setQueryData(
+        'anecdotes',
+        anecdotes.map((anecdote: AnecdoteData) => (anecdote.id === updatedAnecdote.id ? updatedAnecdote : anecdote))
+      );
+    },
+  });
+
   const handleVote = (anecdote: AnecdoteData) => {
     console.log('vote');
+    const updatedAnecdote: AnecdoteData = { ...anecdote, votes: anecdote.votes + 1 };
+    voteMutation.mutate(updatedAnecdote);
   };
 
   if (result.isLoading) {
@@ -27,6 +41,7 @@ const App = () => {
     return <div>anecdote service not available due to problems in server</div>;
   }
 
+  const sorted = result.data.sort((a: AnecdoteData, b: AnecdoteData) => b.votes - a.votes);
   return (
     <div>
       <h3>Anecdote app</h3>
@@ -34,7 +49,7 @@ const App = () => {
       <Notification />
       <AnecdoteForm />
 
-      {result.data.map((anecdote: AnecdoteData) => (
+      {sorted.map((anecdote: AnecdoteData) => (
         <div key={anecdote.id}>
           <div>{anecdote.content}</div>
           <div>

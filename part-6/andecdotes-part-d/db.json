@@ -43,7 +43,12 @@
     {
       "id": "Vi6Yk0q",
       "content": "Hola!",
-      "votes": 7
+      "votes": 9
+    },
+    {
+      "content": "Hola!",
+      "votes": 9,
+      "id": "qI1vn1E"
     }
   ]
 }
