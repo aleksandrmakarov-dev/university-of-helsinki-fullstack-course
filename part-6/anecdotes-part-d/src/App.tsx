@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import AnecdoteForm from './components/anecdote-form';
 import Notification from './components/notification';
 import { getAnecdotes, updateAnecdote } from './requests';
-import { useNotificationDispatch } from './notification-context';
+import { useNotificationDispatch, useNotify } from './notification-context';
 
 export interface AnecdoteData {
   id?: string;
@@ -18,7 +18,7 @@ const App = () => {
 
   const queryClient = useQueryClient();
 
-  const notificationDispatch = useNotificationDispatch();
+  const notify = useNotify();
 
   const voteMutation = useMutation(updateAnecdote, {
     onSuccess: (updatedAnecdote: AnecdoteData) => {
@@ -40,17 +40,6 @@ const App = () => {
     });
   };
 
-  const notify = (content: string) => {
-    notificationDispatch({
-      type: 'notify',
-      payload: content,
-    });
-
-    setTimeout(() => {
-      notificationDispatch({ type: 'clear' });
-    }, 5000);
-  };
-
   if (result.isLoading) {
     return <div>Loading...</div>;
   }
@@ -65,7 +54,7 @@ const App = () => {
       <h3>Anecdote app</h3>
 
       <Notification />
-      <AnecdoteForm notify={notify} />
+      <AnecdoteForm />
 
       {sorted.map((anecdote: AnecdoteData) => (
         <div key={anecdote.id}>

@@ -28,6 +28,20 @@ export const useNotificationDispatch = () => {
   return notificationAndDispatch[1];
 };
 
+export const useNotify = () => {
+  const dispatch = useNotificationDispatch();
+
+  return (payload: string) => {
+    dispatch({
+      type: 'notify',
+      payload,
+    });
+    setTimeout(() => {
+      dispatch({ type: 'clear' });
+    }, 5000);
+  };
+};
+
 interface NotificationContextProviderProps {
   children: JSX.Element | JSX.Element[] | null;
 }

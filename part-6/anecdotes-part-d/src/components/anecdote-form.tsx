@@ -2,13 +2,12 @@ import { FC, FormEvent } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { AnecdoteData } from '../App';
 import { createAnecdote } from '../requests';
+import { useNotify } from '../notification-context';
 
-interface AnecdoteFormProps {
-  notify: (content: string) => void;
-}
-
-const AnecdoteForm: FC<AnecdoteFormProps> = ({ notify }) => {
+const AnecdoteForm = () => {
   const queryClient = useQueryClient();
+
+  const notify = useNotify();
 
   const newAnecdoteMutation = useMutation(createAnecdote, {
     onSuccess: (createdAnecdote: AnecdoteData) => {
@@ -31,7 +30,7 @@ const AnecdoteForm: FC<AnecdoteFormProps> = ({ notify }) => {
         notify(`anecdote '${data.content}' created`);
       },
       onError: (error: any) => {
-        notify(error.message);
+        notify(JSON.stringify(error.response.data));
       },
     });
   };
