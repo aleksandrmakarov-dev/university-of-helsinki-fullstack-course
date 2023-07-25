@@ -1,12 +1,14 @@
 {
-  "name": "unicafe-app",
+  "name": "create-react-app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/node": "^16.18.35",
+    "@types/react": "^18.2.11",
+    "@types/react-dom": "^18.2.4",
     "axios": "^1.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-query": "^3.39.3",
     "react-scripts": "5.0.1",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
@@ -17,8 +19,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint --ignore-path .eslintignore --ext .js,.ts .",
-    "cypress:open": "cypress open",
-    "server": "json-server -p 3001 --watch db.json"
+    "cypress:open": "cypress open"
   },
   "eslintConfig": {
     "extends": [
@@ -41,10 +42,6 @@
   "devDependencies": {
     "@testing-library/react": "^14.0.0",
     "@types/axios": "^0.14.0",
-    "@types/node": "^16.18.35",
-    "@types/react": "^18.2.11",
-    "@types/react-dom": "^18.2.4",
-    "@types/react-query": "^1.2.9",
     "@typescript-eslint/eslint-plugin": "^5.59.7",
     "@typescript-eslint/parser": "^5.59.7",
     "eslint": "^8.41.0",
