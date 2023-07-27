@@ -4,9 +4,10 @@ import { AnecdoteData } from '../types/AnecdoteData';
 
 interface CreateFormProps {
   onCreate: (newAnecdote: AnecdoteData) => void;
+  onNotify: (content: string) => void;
 }
 
-const CreateForm: FC<CreateFormProps> = ({ onCreate }) => {
+const CreateForm: FC<CreateFormProps> = ({ onCreate, onNotify }) => {
   const navigate = useNavigate();
 
   const [content, setContent] = useState<string>('');
@@ -28,6 +29,8 @@ const CreateForm: FC<CreateFormProps> = ({ onCreate }) => {
     setInfo('');
 
     navigate('/');
+
+    onNotify(`a new anecdote '${content}' created!`);
   };
 
   const margin = {

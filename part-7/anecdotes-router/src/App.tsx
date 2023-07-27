@@ -8,6 +8,7 @@ import About from './components/About';
 import Footer from './components/Footer';
 import CreateForm from './components/CreateForm';
 import Anecdote from './components/Anecdote';
+import Notification from './components/Notification';
 
 const App = () => {
   const [anecdotes, setAnecdotes] = useState<AnecdoteData[]>([
@@ -29,8 +30,17 @@ const App = () => {
 
   const match = useMatch('/notes/:id');
 
+  const [notification, setNotificaiton] = useState<string>('');
+
   const onCreate = (newAnecdote: AnecdoteData) => {
     setAnecdotes(anecdotes.concat({ ...newAnecdote, id: Math.round(Math.random() * 100000) }));
+  };
+
+  const onNotify = (content: string) => {
+    setNotificaiton(content);
+    setTimeout(() => {
+      setNotificaiton('');
+    }, 5000);
   };
 
   const padding = {
@@ -44,10 +54,11 @@ const App = () => {
       <h1>Software Anecdotes</h1>
       <Menu />
       <div style={padding}>
+        <Notification content={notification} />
         <Routes>
           <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
           <Route path="/notes/:id" element={<Anecdote anecdote={selectedAnecdote} />} />
-          <Route path="/create" element={<CreateForm onCreate={onCreate} />} />
+          <Route path="/create" element={<CreateForm onCreate={onCreate} onNotify={onNotify} />} />
           <Route path="/about" element={<About />} />
         </Routes>
       </div>
