@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import './App.css';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useMatch } from 'react-router-dom';
 import { AnecdoteData } from './types/AnecdoteData';
 import Menu from './components/Menu';
 import AnecdoteList from './components/AnecdoteList';
 import About from './components/About';
 import Footer from './components/Footer';
 import CreateForm from './components/CreateForm';
+import Anecdote from './components/Anecdote';
 
 const App = () => {
   const [anecdotes, setAnecdotes] = useState<AnecdoteData[]>([
@@ -26,6 +27,8 @@ const App = () => {
     },
   ]);
 
+  const match = useMatch('/notes/:id');
+
   const onCreate = (newAnecdote: AnecdoteData) => {
     setAnecdotes(anecdotes.concat({ ...newAnecdote, id: Math.round(Math.random() * 100000) }));
   };
@@ -34,6 +37,8 @@ const App = () => {
     padding: 10,
   };
 
+  const selectedAnecdote = match ? anecdotes.find((a: AnecdoteData) => a.id === Number(match.params.id)) : undefined;
+
   return (
     <div>
       <h1>Software Anecdotes</h1>
@@ -41,6 +46,7 @@ const App = () => {
       <div style={padding}>
         <Routes>
           <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
+          <Route path="/notes/:id" element={<Anecdote anecdote={selectedAnecdote} />} />
           <Route path="/create" element={<CreateForm onCreate={onCreate} />} />
           <Route path="/about" element={<About />} />
         </Routes>

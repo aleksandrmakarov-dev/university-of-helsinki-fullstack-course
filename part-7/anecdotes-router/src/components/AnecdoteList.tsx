@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { Link } from 'react-router-dom';
 import { AnecdoteData } from '../types/AnecdoteData';
 
 interface AnecdoteListProps {
@@ -10,7 +11,9 @@ const AnecdoteList: FC<AnecdoteListProps> = ({ anecdotes }) => {
     <div>
       <h2>Anecdotes</h2>
       {anecdotes.map((anecdote: AnecdoteData) => (
-        <li key={anecdote.id}>{anecdote.content}</li>
+        <li key={anecdote.id}>
+          <Link to={`/notes/${anecdote.id}`}>{anecdote.content}</Link>
+        </li>
       ))}
     </div>
   );
