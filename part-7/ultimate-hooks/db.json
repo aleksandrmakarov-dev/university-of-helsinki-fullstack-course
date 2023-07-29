@@ -1,0 +1,38 @@
+{
+  "notes": [
+    {
+      "id": 1,
+      "content": "custom hooks are awesome"
+    },
+    {
+      "id": 2,
+      "content": "best feature ever <3"
+    },
+    {
+      "id": 3,
+      "content": "My personal note..."
+    }
+  ],
+  "persons": [
+    {
+      "id": 1,
+      "name": "Matti Luukkainen",
+      "number": "040-12344565"
+    },
+    {
+      "id": 2,
+      "name": "Tarja Halonen",
+      "number": "040-2223334"
+    },
+    {
+      "id": 3,
+      "name": "Alex",
+      "number": "040-1233331"
+    },
+    {
+      "id": 4,
+      "name": "Bob",
+      "number": "040-1231234"
+    }
+  ]
+}
