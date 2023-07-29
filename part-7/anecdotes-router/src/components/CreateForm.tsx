@@ -1,6 +1,7 @@
 import { FC, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AnecdoteData } from '../types/AnecdoteData';
+import { AnecdoteData } from '../interfaces/AnecdoteData';
+import useField from '../hooks/useField';
 
 interface CreateFormProps {
   onCreate: (newAnecdote: AnecdoteData) => void;
@@ -10,27 +11,27 @@ interface CreateFormProps {
 const CreateForm: FC<CreateFormProps> = ({ onCreate, onNotify }) => {
   const navigate = useNavigate();
 
-  const [content, setContent] = useState<string>('');
-  const [author, setAuthor] = useState<string>('');
-  const [info, setInfo] = useState<string>('');
+  const content = useField('text');
+  const author = useField('text');
+  const info = useField('text');
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onCreate({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0,
       id: 0,
     });
 
-    setContent('');
-    setAuthor('');
-    setInfo('');
+    // setContent('');
+    // setAuthor('');
+    // setInfo('');
 
     navigate('/');
 
-    onNotify(`a new anecdote '${content}' created!`);
+    onNotify(`a new anecdote '${content.value}' created!`);
   };
 
   const margin = {
@@ -42,15 +43,15 @@ const CreateForm: FC<CreateFormProps> = ({ onCreate, onNotify }) => {
       <form onSubmit={onSubmit}>
         <div style={margin}>
           Content:
-          <input value={content} onChange={(e: FormEvent<HTMLInputElement>) => setContent(e.currentTarget.value)} />
+          <input {...content} />
         </div>
         <div style={margin}>
           Author:
-          <input value={author} onChange={(e: FormEvent<HTMLInputElement>) => setAuthor(e.currentTarget.value)} />
+          <input {...author} />
         </div>
         <div style={margin}>
           Info:
-          <input value={info} onChange={(e: FormEvent<HTMLInputElement>) => setInfo(e.currentTarget.value)} />
+          <input {...info} />
         </div>
         <button type="submit">Submit</button>
       </form>

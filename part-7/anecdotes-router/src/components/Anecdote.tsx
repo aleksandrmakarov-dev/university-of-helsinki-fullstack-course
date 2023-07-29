@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { AnecdoteData } from '../types/AnecdoteData';
+import { AnecdoteData } from '../interfaces/AnecdoteData';
 
 interface AnecdoteProps {
   anecdote?: AnecdoteData;

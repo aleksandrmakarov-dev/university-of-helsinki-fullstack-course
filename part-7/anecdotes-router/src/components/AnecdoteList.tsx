@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
-import { AnecdoteData } from '../types/AnecdoteData';
+import { AnecdoteData } from '../interfaces/AnecdoteData';
 
 interface AnecdoteListProps {
   anecdotes: AnecdoteData[];

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './App.css';
 import { Route, Routes, useMatch } from 'react-router-dom';
-import { AnecdoteData } from './types/AnecdoteData';
+import { AnecdoteData } from './interfaces/AnecdoteData';
 import Menu from './components/Menu';
 import AnecdoteList from './components/AnecdoteList';
 import About from './components/About';
