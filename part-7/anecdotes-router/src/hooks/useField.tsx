@@ -1,4 +1,4 @@
-import { FormEvent, FormEventHandler, useState } from 'react';
+import { FormEvent, useState } from 'react';
 
 const useField = (type: string) => {
   const [value, setValue] = useState<string>('');
@@ -7,10 +7,15 @@ const useField = (type: string) => {
     setValue(e.currentTarget.value);
   };
 
+  const reset = () => {
+    setValue('');
+  };
+
   return {
     type,
     value,
     onChange,
+    reset,
   };
 };
 

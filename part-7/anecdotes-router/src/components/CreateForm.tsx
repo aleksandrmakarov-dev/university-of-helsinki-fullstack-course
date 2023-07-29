@@ -11,9 +11,9 @@ interface CreateFormProps {
 const CreateForm: FC<CreateFormProps> = ({ onCreate, onNotify }) => {
   const navigate = useNavigate();
 
-  const content = useField('text');
-  const author = useField('text');
-  const info = useField('text');
+  const { reset: resetContent, ...content } = useField('text');
+  const { reset: resetAuthor, ...author } = useField('text');
+  const { reset: resetInfo, ...info } = useField('text');
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,35 +25,47 @@ const CreateForm: FC<CreateFormProps> = ({ onCreate, onNotify }) => {
       id: 0,
     });
 
-    // setContent('');
-    // setAuthor('');
-    // setInfo('');
+    resetAllFields();
 
     navigate('/');
 
     onNotify(`a new anecdote '${content.value}' created!`);
   };
 
-  const margin = {
+  const resetAllFields = () => {
+    resetContent();
+    resetAuthor();
+    resetInfo();
+  };
+  const marginBottom = {
     marginBottom: 10,
+  };
+
+  const marginRight = {
+    marginRight: 10,
   };
 
   return (
     <div>
       <form onSubmit={onSubmit}>
-        <div style={margin}>
+        <div style={marginBottom}>
           Content:
           <input {...content} />
         </div>
-        <div style={margin}>
+        <div style={marginBottom}>
           Author:
           <input {...author} />
         </div>
-        <div style={margin}>
+        <div style={marginBottom}>
           Info:
           <input {...info} />
         </div>
-        <button type="submit">Submit</button>
+        <button type="submit" style={marginRight}>
+          Submit
+        </button>
+        <button type="button" onClick={resetAllFields}>
+          Reset
+        </button>
       </form>
     </div>
   );

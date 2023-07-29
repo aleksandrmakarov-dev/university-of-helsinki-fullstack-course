@@ -17,6 +17,9 @@ const Anecdote: FC<AnecdoteProps> = ({ anecdote }) => {
       <div>
         votes: <strong>{anecdote.votes}</strong>
       </div>
+      <div>
+        for more info see: <a href={anecdote.info}>{anecdote.info}</a>
+      </div>
     </div>
   );
 };
