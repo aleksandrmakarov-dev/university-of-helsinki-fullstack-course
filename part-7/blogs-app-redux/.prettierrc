@@ -1,0 +1,7 @@
+{
+    "semi": true,
+    "singleQuote": true,
+    "arrowParens": "avoid",
+    "indent":4,
+    "printWidth":120
+}
