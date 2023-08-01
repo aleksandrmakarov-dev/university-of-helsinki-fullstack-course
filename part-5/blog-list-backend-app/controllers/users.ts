@@ -2,6 +2,7 @@ import express, { Request, Response, Router } from 'express';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { User } from '../models/user';
+import { BadRequestError } from '../utils/custom-errors';
 
 interface UserCreateRequest {
   username: string;
@@ -42,6 +43,30 @@ router.post('/', async (req: Request, res: Response) => {
   const createdUser: User = await UserModel.create(newUser);
 
   return res.status(201).json(createdUser);
+});
+
+router.put('/change-password', async (req: Request, res: Response) => {
+  const { username, password } = req.body;
+
+  const minLength = 3;
+
+  if (password.length < minLength) {
+    return res.status(400).json({
+      error: `User validation failed: username: Path \`password\` is shorter than the minimum allowed length (${minLength}).`,
+    });
+  }
+
+  const saltRounds = 10;
+  const passwordHash: string = await bcrypt.hash(password, saltRounds);
+
+  const foundUser: User | null = await UserModel.findOne({ username });
+  if (!foundUser) {
+    return new BadRequestError('User not found');
+  }
+
+  await UserModel.findByIdAndUpdate(foundUser.id, { ...foundUser, passwordHash });
+
+  return res.status(204).end();
 });
 
 module.exports = router;

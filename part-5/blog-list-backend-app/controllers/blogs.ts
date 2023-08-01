@@ -116,6 +116,7 @@ router.put('/:id', async (req: TokenAuthorizeRequest, res: Response) => {
   if (updatedBlog === null) {
     throw new NotFoundError(`blog with id = ${id} not found`);
   }
+  await updatedBlog.populate('user', { blogs: 0 });
   return res.json(updatedBlog);
 });
 
