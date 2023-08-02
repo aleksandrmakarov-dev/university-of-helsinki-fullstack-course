@@ -7,6 +7,7 @@ interface BlogData {
   url: string;
   likes: number;
   user: UserData;
+  comments: string[];
 }
 
 export default BlogData;

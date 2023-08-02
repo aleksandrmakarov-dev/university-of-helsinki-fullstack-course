@@ -7,9 +7,13 @@ import BlogData from '../interfaces/BlogData';
 
 const UserPage = () => {
   const userPageParams = useParams();
-  const userId = userPageParams.id;
+  const userId = userPageParams.id ?? '';
 
-  const { data, isLoading: isUserLoading, isError: isUserError } = useQuery('users', UserService.getAll);
+  const {
+    data,
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useQuery<UserData>('user', () => UserService.getById(userId));
 
   if (isUserLoading) {
     return (
@@ -23,19 +27,17 @@ const UserPage = () => {
     return <div>Failed while fetching data</div>;
   }
 
-  const foundUser = data.find((u: UserData) => u.id === userId);
-
-  if (!foundUser) {
+  if (!data) {
     return <div>User not found</div>;
   }
 
   return (
     <div>
-      <h2 className="text-3xl font-semibold mb-4">{foundUser.name}</h2>
+      <h2 className="text-3xl font-semibold mb-4">{data.name}</h2>
       <h5 className="text-xl block mb-2">Added blogs</h5>
-      {foundUser.blogs.length > 0 ? (
+      {data.blogs.length > 0 ? (
         <ListGroup>
-          {foundUser.blogs.map((b: BlogData) => (
+          {data.blogs.map((b: BlogData) => (
             <ListGroup.Item key={b.id} href={`/blogs/${b.id}`}>
               {b.title}
             </ListGroup.Item>

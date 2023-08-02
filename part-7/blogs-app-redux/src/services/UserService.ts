@@ -2,8 +2,10 @@ import axios from 'axios';
 import UserData from '../interfaces/UserData';
 import CredentialsData from '../interfaces/CredentialsData';
 
+const baseUrl = '/api/users';
+
 const getAll = async () => {
-  const response = await axios.get<UserData[]>('/api/users');
+  const response = await axios.get<UserData[]>(baseUrl);
   return response.data;
 };
 
@@ -12,7 +14,13 @@ const login = async (credentials: CredentialsData) => {
   return response.data;
 };
 
+const getById = async (id: string): Promise<UserData> => {
+  const response = await axios.get<UserData>(`${baseUrl}/${id}`);
+  return response.data;
+};
+
 export default {
   login,
   getAll,
+  getById,
 };

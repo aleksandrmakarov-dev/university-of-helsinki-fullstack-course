@@ -44,6 +44,11 @@ const create = async (data: BlogCreateData) => {
   return response.data;
 };
 
+const postComment = async (id: string, comment: string) => {
+  const response = await axios.post(`${baseUrl}/${id}/comments`, { comment });
+  return response.data;
+};
+
 export default {
   getAll,
   getById,
@@ -51,4 +56,5 @@ export default {
   remove,
   create,
   setToken,
+  postComment,
 };
