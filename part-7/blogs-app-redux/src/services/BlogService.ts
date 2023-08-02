@@ -1,8 +1,15 @@
 import axios from 'axios';
 import BlogData from '../interfaces/BlogData';
 import BlogUpdateData from '../interfaces/BlogUpdateData';
+import BlogCreateData from '../interfaces/BlogCreateData';
 
 const baseUrl = '/api/blogs';
+
+let token: string | null = null;
+
+const setToken = (newToken: string | null) => {
+  token = newToken;
+};
 
 const getAll = async (): Promise<BlogData[]> => {
   const response = await axios.get<BlogData[]>(baseUrl);
@@ -20,7 +27,20 @@ const update = async (id: string, data: BlogUpdateData) => {
 };
 
 const remove = async (id: string) => {
-  const response = await axios.delete(`${baseUrl}/${id}`);
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
+
+  const response = await axios.delete(`${baseUrl}/${id}`, config);
+  return response.data;
+};
+
+const create = async (data: BlogCreateData) => {
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
+
+  const response = await axios.post(baseUrl, data, config);
   return response.data;
 };
 
@@ -29,4 +49,6 @@ export default {
   getById,
   update,
   remove,
+  create,
+  setToken,
 };

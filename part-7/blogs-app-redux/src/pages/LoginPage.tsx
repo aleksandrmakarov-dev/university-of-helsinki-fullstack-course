@@ -1,23 +1,25 @@
-import { Button, Label, Spinner, TextInput } from 'flowbite-react';
+import { Button, Label, TextInput } from 'flowbite-react';
 import { FaUser, FaLock } from 'react-icons/fa6';
 import { FormEvent } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
 import useField from '../hooks/useField';
 import UserService from '../services/UserService';
 import CredentialsData from '../interfaces/CredentialsData';
 import { useAppDispatch } from '../hooks/useAppDispatch';
 import AuthData from '../interfaces/AuthData';
 import { setUser } from '../reducers/authReducer';
+import { showNotification } from '../reducers/notificationReducer';
 
 const LoginPage = () => {
-  const { reset: resetUsername, ...usernameInput } = useField<string>('text', 'Enter username...', 'root');
-  const { reset: resetPassword, ...passwordInput } = useField<string>('password', 'Enter password...', 'root123');
+  const { reset: resetUsername, ...usernameInput } = useField<string>('text', '', 'Enter username...');
+  const { reset: resetPassword, ...passwordInput } = useField<string>('password', '', 'Enter password...');
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { mutate: loginMutate, isLoading: isLoginLoading } = useMutation<any, Error, CredentialsData>(
+  const { mutate: loginMutate, isLoading: isLoginLoading } = useMutation<any, AxiosError, CredentialsData>(
     UserService.login
   );
 
@@ -32,11 +34,26 @@ const LoginPage = () => {
       {
         onSuccess: (data: AuthData) => {
           dispatch(setUser(data));
-          console.log(data);
+          dispatch(
+            showNotification({
+              type: 'success',
+              text: `You logged in successfully! Welcome back ${data.name}`,
+              timeout: 5000,
+            })
+          );
           resetUsername();
           resetPassword();
-
           navigate('/');
+        },
+        onError: (error: AxiosError<any>) => {
+          dispatch(
+            showNotification({
+              type: 'failure',
+              title: 'Login failure',
+              text: error.response?.data.error,
+              timeout: 10000,
+            })
+          );
         },
       }
     );
@@ -44,7 +61,7 @@ const LoginPage = () => {
 
   return (
     <div>
-      <form className="flex mx-auto max-w-md flex-col gap-4" onSubmit={onSubmit}>
+      <form className="flex max-w-md mx-auto flex-col gap-4" onSubmit={onSubmit}>
         <div>
           <div className="block mb-2">
             <Label value="Username" />
@@ -55,15 +72,8 @@ const LoginPage = () => {
             <TextInput icon={FaLock} {...passwordInput} />
           </div>
         </div>
-        <Button type="submit" disabled={isLoginLoading}>
-          {isLoginLoading ? (
-            <>
-              <Spinner aria-label="Spinner button example" />
-              <span className="pl-3">Loading...</span>
-            </>
-          ) : (
-            'Login'
-          )}
+        <Button type="submit" disabled={isLoginLoading} isProcessing={isLoginLoading}>
+          Login
         </Button>
       </form>
     </div>

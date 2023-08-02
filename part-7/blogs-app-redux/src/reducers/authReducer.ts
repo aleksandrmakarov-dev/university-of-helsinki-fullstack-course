@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import AuthData from '../interfaces/AuthData';
 import { AppDispatch } from '../store';
+import BlogService from '../services/BlogService';
 
 const localStorageKey = 'AUTH_USER';
 
@@ -8,6 +9,7 @@ const initalState = () => {
   const json = window.localStorage.getItem(localStorageKey);
   if (json) {
     const user = JSON.parse(json) as AuthData;
+    BlogService.setToken(user.token);
     return user;
   }
   return null;
@@ -19,10 +21,12 @@ const authSlice = createSlice({
   reducers: {
     set(state, action: PayloadAction<AuthData>) {
       window.localStorage.setItem(localStorageKey, JSON.stringify(action.payload));
+      BlogService.setToken(action.payload.token);
       return action.payload;
     },
     clear() {
       window.localStorage.removeItem(localStorageKey);
+      BlogService.setToken(null);
       return null;
     },
   },

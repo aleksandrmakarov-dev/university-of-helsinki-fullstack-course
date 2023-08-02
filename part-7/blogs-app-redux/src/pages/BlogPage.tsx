@@ -3,16 +3,24 @@ import { useMutation, useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { FaHeart, FaTrash } from 'react-icons/fa6';
+import { useSelector } from 'react-redux';
+import { AxiosError } from 'axios';
 import BlogService from '../services/BlogService';
 import BlogData from '../interfaces/BlogData';
 import BlogUpdateData from '../interfaces/BlogUpdateData';
+import { AppState } from '../store';
+import { useAppDispatch } from '../hooks/useAppDispatch';
+import { showNotification } from '../reducers/notificationReducer';
 
 const BlogPage = () => {
   const blogPageParams = useParams();
   const navigation = useNavigate();
+  const user = useSelector((state: AppState) => state.auth);
   const blogId = blogPageParams.id;
 
   const [blog, setBlog] = useState<BlogData | null>(null);
+
+  const dispatch = useAppDispatch();
 
   const {
     data,
@@ -31,13 +39,13 @@ const BlogPage = () => {
 
   const { mutate: blogUpdateMutation, isLoading: isBlogUpdateLoading } = useMutation<
     BlogData,
-    Error,
+    AxiosError,
     { id: string; data: BlogUpdateData }
   >({
     mutationFn: async (params: { id: string; data: BlogUpdateData }) => BlogService.update(params.id, params.data),
   });
 
-  const { mutate: blogRemoveMutation, isLoading: isBlogRemoveLoading } = useMutation<any, Error, string>(
+  const { mutate: blogRemoveMutation, isLoading: isBlogRemoveLoading } = useMutation<any, AxiosError, string>(
     BlogService.remove
   );
 
@@ -65,23 +73,23 @@ const BlogPage = () => {
         onSuccess: (d: BlogData) => {
           setBlog(d);
         },
-        onError: (e: Error) => {
-          console.log(e);
+        onError: (error: AxiosError<any>) => {
+          dispatch(showNotification({ type: 'failure', text: error.response?.data.error, timeout: 10000 }));
         },
       }
     );
   };
 
   const onRemove = () => {
-    const dlgResult = window.confirm(`Are you sure you want to delete "${blog.title}" blog?`);
+    const dlgResult = window.confirm(`Are you sure you want to removed "${blog.title}" blog?`);
     if (dlgResult === true) {
       blogRemoveMutation(blog.id, {
         onSuccess: () => {
-          console.log('successfully removed');
+          dispatch(showNotification({ type: 'success', text: 'Blog removed successfully', timeout: 5000 }));
           navigation('/');
         },
-        onError: () => {
-          console.log('error');
+        onError: (error: AxiosError<any>) => {
+          dispatch(showNotification({ type: 'failure', text: error.response?.data.error, timeout: 10000 }));
         },
       });
     }
@@ -111,10 +119,12 @@ const BlogPage = () => {
         </button>
         <p>{blog.likes}</p>
       </div>
-      <Button disabled={isBlogRemoveLoading} isProcessing={isBlogRemoveLoading} color="failure" onClick={onRemove}>
-        <FaTrash className="mr-2 h-5 w-5" />
-        <p>Remove</p>
-      </Button>
+      {user?.username === blog.user.username ? (
+        <Button disabled={isBlogRemoveLoading} isProcessing={isBlogRemoveLoading} color="failure" onClick={onRemove}>
+          <FaTrash className="mr-2 h-5 w-5" />
+          <p>Remove</p>
+        </Button>
+      ) : null}
     </div>
   );
 };
